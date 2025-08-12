@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>WizzBox.AI — Adaptive, curriculum‑aligned learning</title>
+    <meta name="description" content="WizzBox.AI is an adaptive learning platform using AI-driven assessments, a proprietary method for dynamic learning paths, and curriculum alignment. Currently in private pilot." />
+    <meta property="og:title" content="WizzBox.AI — Adaptive, curriculum‑aligned learning" />
+    <meta property="og:description" content="AI-driven assessments. Proprietary method for dynamic learning paths. Curriculum-aligned lessons. Built with educators." />
+    <meta property="og:type" content="website" />
+    <meta name="theme-color" content="#f7efe6" />
+    <style>
+      :root {
+        --bg: #f7efe6;           /* warm, light background */
+        --bg-accent: #fbf6ef;    /* subtle paper-like tint */
+        --text: #1a1a1a;         /* primary text */
+        --muted: #5a5a5a;        /* secondary text */
+        --line: #e7ded2;         /* hairline rule */
+        --accent: #0f172a;       /* button text / strong */
+        --accent-bg: #111111;    /* button background */
+        --accent-bg-hover: #000000;
+        --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, "Times New Roman", Times, serif;
+        --sans: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+      }
+
+      html, body { height: 100%; }
+      body {
+        margin: 0;
+        background: radial-gradient(1200px 800px at 20% 10%, var(--bg-accent), var(--bg)) no-repeat;
+        color: var(--text);
+        font-family: var(--sans);
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
+      .container {
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 32px 20px 80px;
+      }
+
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-bottom: 20px;
+      }
+
+      .wordmark {
+        font-family: var(--serif);
+        font-size: 24px;
+        letter-spacing: 0.4px;
+      }
+
+      .badge {
+        font-size: 12px;
+        color: var(--muted);
+        border: 1px solid var(--line);
+        padding: 6px 10px;
+        border-radius: 999px;
+        background: #ffffffa0;
+        backdrop-filter: blur(2px);
+      }
+
+      main { padding-top: 40px; }
+
+      h1 {
+        font-family: var(--serif);
+        font-weight: 700;
+        font-size: clamp(36px, 6vw, 56px);
+        line-height: 1.1;
+        margin: 0 0 16px 0;
+        letter-spacing: -0.5px;
+      }
+
+      .lede {
+        font-size: clamp(16px, 2.3vw, 20px);
+        color: var(--muted);
+        max-width: 740px;
+        line-height: 1.55;
+        margin-bottom: 28px;
+      }
+
+      .actions { display: flex; gap: 12px; align-items: center; }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        padding: 14px 18px;
+        border-radius: 10px;
+        border: 1px solid #000000;
+        color: #ffffff;
+        background: var(--accent-bg);
+        text-decoration: none;
+        font-weight: 600;
+        letter-spacing: 0.2px;
+        transition: background-color 160ms ease, transform 80ms ease;
+      }
+
+      .btn:hover { background: var(--accent-bg-hover); }
+      .btn:active { transform: translateY(1px); }
+
+      .note {
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      .rule { height: 1px; background: var(--line); margin: 48px 0 28px; }
+
+      .grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+
+      .card {
+        background: #fffefb;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 18px 18px 16px;
+      }
+
+      .card h3 {
+        font-family: var(--serif);
+        margin: 0 0 6px 0;
+        font-size: 18px;
+      }
+
+      .card p { margin: 0; color: var(--muted); line-height: 1.55; }
+
+      @media (min-width: 760px) {
+        .grid { grid-template-columns: repeat(3, 1fr); }
+      }
+
+      footer {
+        margin-top: 56px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      .subtle-link { color: inherit; text-decoration: none; border-bottom: 1px dotted var(--line); }
+      .subtle-link:hover { border-bottom-color: var(--muted); }
+
+      /* (curricula strip removed) */
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <div class="wordmark">WizzBox.AI</div>
+        <span class="badge">Private pilot</span>
+      </header>
+
+      <main>
+        <h1>Adaptive learning, built with educators.</h1>
+        <p class="lede">
+          AI‑driven assessments, a proprietary method for dynamic learning paths, and curriculum‑aligned lessons.
+          Built with curriculum designers and teachers. Adapts to each learner.
+        </p>
+
+        <div class="actions">
+          <a
+            class="btn"
+            href="mailto:dev@wizzbox.ai?subject=Waitlist%20Request%20-%20WizzBox.AI&body=Hi%20WizzBox.AI%20team%2C%0A%0AI'd%20like%20to%20join%20the%20waitlist.%0A%0AName%3A%20%0ARole%20(student%2Fteacher%2Fschool%2Fparent)%3A%20%0ACurriculum%3A%20CBSE%2FICSE%2FIB%2FState%0ARegion%3A%20%0AUse%20case%3A%20%0A%0AThank%20you!"
+            aria-label="Join the waitlist via email"
+          >
+            Join the waitlist
+          </a>
+          <span class="note">We’ll reach out when slots open.</span>
+        </div>
+
+        <div class="rule" aria-hidden="true"></div>
+
+        <section class="grid" aria-label="Highlights">
+          <div class="card">
+            <h3>Adaptive assessments</h3>
+            <p>Questions adjust in real‑time based on performance to pinpoint understanding.</p>
+          </div>
+          <div class="card">
+            <h3>Dynamic learning paths</h3>
+            <p>A proprietary method surfaces prerequisite gaps and sequences next steps for each learner.</p>
+          </div>
+          <div class="card">
+            <h3>Customized teaching</h3>
+            <p>Instruction adapts to each learner while staying aligned to the curriculum.</p>
+          </div>
+        </section>
+
+        
+
+        <footer>
+          <span>© <span id="y"></span> WizzBox.AI</span>
+          <span>Questions? <a class="subtle-link" href="mailto:dev@wizzbox.ai">dev@wizzbox.ai</a></span>
+        </footer>
+      </main>
+    </div>
+
+    <script>
+      // Set year unobtrusively
+      document.getElementById('y').textContent = new Date().getFullYear();
+    </script>
+  </body>
+  </html>
+
