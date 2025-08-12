@@ -26,7 +26,9 @@
       html, body { height: 100%; }
       body {
         margin: 0;
-        background: radial-gradient(1200px 800px at 20% 10%, var(--bg-accent), var(--bg)) no-repeat;
+        min-height: 100vh;
+        /* Smooth, full-viewport warm background without abrupt edge on mobile */
+        background: radial-gradient(farthest-corner at 20% 10%, var(--bg-accent) 0%, var(--bg) 70%) fixed;
         color: var(--text);
         font-family: var(--sans);
         -webkit-font-smoothing: antialiased;
@@ -81,7 +83,7 @@
         margin-bottom: 28px;
       }
 
-      .actions { display: flex; gap: 12px; align-items: center; }
+      .actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
 
       .btn {
         display: inline-flex;
@@ -97,6 +99,7 @@
         font-weight: 600;
         letter-spacing: 0.2px;
         transition: background-color 160ms ease, transform 80ms ease;
+        white-space: nowrap; /* prevent line break on narrow screens */
       }
 
       .btn:hover { background: var(--accent-bg-hover); }
