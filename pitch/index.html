@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>WizzBox.AI — A Proposal for Your School</title>
+<title>WizzBox.AI: A Proposal for Your School</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,340;9..144,420;9..144,500;9..144,600&family=Hanken+Grotesk:wght@400;500;600;700&family=Spline+Sans+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Fraunces:opsz,wght@9..144,340;9..144,420;9..144,500;9..144,600&family=Hanken+Grotesk:wght@400;500;600;700&family=Spline+Sans+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
 <style>
   /* ============================================================
-     WizzBox.AI — School Pitch Deck
+     WizzBox.AI: School Pitch Deck
      Editorial / premium. Brand palette: warm cream + navy ink,
      sky + teal accents. Self-contained, keyboard-navigable,
      print-to-PDF friendly (Cmd/Ctrl+P → Save as PDF).
@@ -33,6 +33,7 @@
     --serif: "Fraunces", Georgia, "Times New Roman", serif;
     --sans:  "Hanken Grotesk", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
     --mono:  "Spline Sans Mono", ui-monospace, "SF Mono", Menlo, monospace;
+    --hand:  "Caveat", "Bradley Hand", "Comic Sans MS", cursive;
 
     --pad: clamp(2rem, 5.2vw, 6.5rem);
   }
@@ -63,17 +64,26 @@
     inset: 0;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    /* `safe center` keeps content centered when it fits, but falls back to
+       top-aligned when it's taller than the viewport so it can be scrolled. */
+    justify-content: safe center;
     padding: var(--pad);
     opacity: 0;
     visibility: hidden;
     transform: translateX(46px) scale(.992);
     transition: opacity .55s ease, transform .75s cubic-bezier(.22,.61,.18,1), visibility 0s linear .75s;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
   .deck-slide.active   { opacity: 1; visibility: visible; transform: none; transition: opacity .55s ease, transform .75s cubic-bezier(.22,.61,.18,1), visibility 0s; }
   .deck-slide.is-past  { transform: translateX(-46px) scale(.992); }
   .deck-slide.is-future{ transform: translateX(46px) scale(.992); }
+  /* Centered by default. JS (fitSlides) adds `.overflowing` only when a slide's
+     content is taller than the viewport, flipping it to top-aligned so it
+     scrolls from the top instead of clipping. Automatic for every slide
+     nothing to wire up per page. `safe center` above is the no-JS fallback. */
+  .deck-slide.overflowing { justify-content: flex-start; }
 
   /* paper vs ink themes */
   .s-paper {
@@ -171,6 +181,11 @@
     gap: clamp(2rem, 5vw, 5rem);
     align-items: center;
   }
+  /* let columns shrink to the viewport instead of being forced wide by a
+     child's min-content (e.g. an inline SVG), prevents mobile overflow. */
+  .two-col > * { min-width: 0; }
+  /* a wider second column (e.g. slide 10's heatmap); collapses on mobile below */
+  .two-col.wide-right { grid-template-columns: .9fr 1.1fr; }
 
   /* cards */
   .cards { display: grid; gap: clamp(.9rem, 1.6vw, 1.4rem); }
@@ -301,7 +316,7 @@
   .bar-row.weak .bar-val { color: var(--amber); }
 
   /* checklist grid (integration) */
-  .checks { display:grid; grid-template-columns: repeat(2,1fr); gap: clamp(.8rem,1.5vw,1.3rem); max-width: 60ch; }
+  .checks { display:grid; grid-template-columns: repeat(3,1fr); gap: clamp(1rem,2vw,1.8rem) clamp(1.4rem,2.6vw,2.6rem); max-width: 1180px; }
   .check { display:flex; gap:.9rem; align-items:flex-start; }
   .check svg { flex:none; margin-top:.15rem; }
   .check .em { font-weight:600; color:var(--ink); }
@@ -316,6 +331,52 @@
   .motif .node.warm { fill: var(--teal-br); }
   .pulse { animation: pulse 3.4s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
   @keyframes pulse { 0%,100%{ opacity:.5; } 50%{ opacity:1; } }
+
+  /* slide 7, cinematic-lesson mock: animated narration + lesson viz */
+  @keyframes eqbar { 0%,100% { transform: scaleY(.25); } 50% { transform: scaleY(1); } }
+  .eq { display:flex; justify-content:center; align-items:flex-end; gap:3px; height:30px; }
+  .eq i { display:block; width:3px; height:100%; border-radius:2px; background: var(--teal-br);
+          transform-origin: center bottom; animation: eqbar 1.05s ease-in-out infinite; }
+  .lfrac { display:inline-flex; flex-direction:column; align-items:center; line-height:1; vertical-align:middle; font-family:var(--serif); }
+  .lfrac .d { border-top: 2px solid rgba(246,237,226,.55); margin-top:.14em; padding-top:.05em; }
+  @keyframes denGlow  { 0%,100% { color: rgba(246,237,226,.92); } 50% { color: var(--sky); } }
+  .den-glow  { animation: denGlow 2.4s ease-in-out infinite; }
+  @keyframes sliceGlow { 0%,100% { opacity:.5; } 50% { opacity:1; } }
+  .slice-on { animation: sliceGlow 2.4s ease-in-out infinite; }
+  /* LCM (÷12) grid overlaid on the slice bars, a distinct dashed separator */
+  .lcm-grid { position:absolute; inset:0; display:flex; pointer-events:none; border-radius:3px; overflow:hidden; }
+  .lcm-grid span { flex:1; border-left:1.5px dashed var(--amber); }
+  .lcm-grid span:first-child { border-left:0; }
+  /* graph traversal, the orchestrator walks the concept graph node by node */
+  .jn .dot { fill: rgba(15,23,42,.22); transition: fill .35s ease; }
+  .jn .chk { opacity: 0; transition: opacity .25s ease .08s; }
+  .jn .ring { opacity: 0; }
+  .jn .lbl { fill: var(--muted); transition: fill .35s ease; }
+  .jn.cleared .dot { fill: var(--teal); }
+  .jn.taught  .dot { fill: var(--amber); }            /* taught, persistent */
+  .jn.cleared .chk, .jn.taught .chk { opacity: 1; }
+  .jn.cleared .lbl, .jn.taught .lbl { fill: var(--ink); }
+  @media (prefers-reduced-motion: reduce) {
+    .eq i, .den-glow, .slice-on, .pulse { animation: none; }
+  }
+
+  /* concept-mastery heatmap (slide 10), matrix of horizontal progress bars */
+  .heat { display:grid; gap:6px; position:relative; }
+  /* soft highlight bands behind the weakest column + weakest student row.
+     An absolutely-positioned overlay grid mirrors the same tracks, so it adds
+     no grid cell and displaces nothing; sits at z-index 0, real cells at 1. */
+  .heat-hl { position:absolute; inset:0; display:grid; gap:6px; pointer-events:none; z-index:0; }
+  .heat-hl i { display:block; border-radius:7px; background:rgba(201,119,47,.16); }
+  .heat-h, .heat-rl, .heat-c { z-index:1; }
+  .heat-h { position:relative; }
+  .heat-h span { position:absolute; left:5px; bottom:2px; transform-origin:left bottom; transform:rotate(-45deg);
+                 white-space:nowrap; font-family:var(--mono); font-size:.6rem; font-weight:700; letter-spacing:.02em; color:var(--ink); }
+  .heat-rl { position:relative; }
+  .heat-rl span { position:absolute; right:7px; bottom:20px; transform-origin:right bottom; transform:rotate(-45deg);
+                  white-space:nowrap; font-family:var(--mono); font-size:.6rem; font-weight:700; letter-spacing:.02em; color:var(--ink); }
+  .heat-c { position:relative; border:1px solid rgba(15,23,42,.22); border-radius:4px; background:var(--paper); overflow:hidden; }
+  .heat-c .hb { position:absolute; left:0; top:0; bottom:0; min-width:3px; }
+  .heat-chip { display:inline-block; width:8px; height:8px; border-radius:2px; margin-right:.3rem; vertical-align:middle; }
 
   .cover-mark { font-family: var(--serif); font-weight:500; letter-spacing:-.02em; }
   .wordmark { font-family: var(--serif); font-weight:500; letter-spacing:-.03em; line-height:.95;
@@ -366,11 +427,37 @@
               border-radius:5px; padding:.05rem .4rem; color: var(--ink); }
 
   /* ---------- Responsive ---------- */
+  /* Slide 2's "one exam · one number" drawing: sits at the right on desktop,
+     centers under the copy on smaller screens. */
+  .problem-viz { width: 100%; max-width: 360px; justify-self: end; }
+
   @media (max-width: 860px) {
-    .two-col { grid-template-columns: 1fr; gap: 1.6rem; }
+    /* Extra top/bottom padding clears the fixed nav / dots / hint chrome.
+       Centering vs. scrolling is handled automatically by fitSlides(). */
+    .deck-slide {
+      padding-top: clamp(3.25rem, 9vh, 4.5rem);
+      padding-bottom: clamp(5rem, 14vh, 7rem);
+    }
+    .two-col, .two-col.wide-right { grid-template-columns: 1fr; gap: clamp(1.6rem, 5vw, 2.2rem); }
     .cards.three, .cards.four, .stats, .steps, .timeline, .checks { grid-template-columns: repeat(2,1fr); }
     .timeline::before { display:none; }
-    .side-visual { display:none; }
+    /* Hide only the purely-decorative background graphs (cover / closing);
+       keep the informative diagrams & mock screens, now stacked & scrollable. */
+    .motif.side-visual { display:none; }
+    .side-visual { justify-self: center; }
+    .problem-viz { justify-self: center; margin: .4rem auto 0; }
+  }
+
+  @media (max-width: 560px) {
+    :root { --pad: clamp(1.25rem, 6vw, 1.75rem); }
+    .cards.three, .cards.four, .stats, .steps, .timeline, .checks { grid-template-columns: 1fr; }
+    .display { font-size: clamp(2rem, 9vw, 2.7rem); }
+    .display.sm { font-size: clamp(1.7rem, 8vw, 2.3rem); }
+    .wordmark { font-size: clamp(3rem, 16vw, 4.6rem); }
+    .lead { font-size: clamp(1rem, 4.2vw, 1.16rem); }
+    .deck-nav { bottom: 1rem; right: 1rem; }
+    .deck-dots { bottom: 1.15rem; left: 1rem; }
+    .hint { display: none; }
   }
 
   /* ---------- Print → PDF ---------- */
@@ -382,6 +469,7 @@
       position: relative; inset: auto; width: 1280px; height: 720px;
       opacity:1 !important; visibility:visible !important; transform:none !important;
       page-break-after: always; break-after: page;
+      justify-content: center !important; overflow: hidden !important;
     }
     [data-r] { opacity:1 !important; transform:none !important; }
     .deck-progress, .deck-nav, .deck-dots, .hint { display:none !important; }
@@ -419,8 +507,8 @@
       <div class="kicker" data-r style="--d:0" id="cover-kicker">A proposal for your school</div>
       <h1 class="display" data-r style="--d:1">Teach every student like they're <span class="accent">your only student.</span></h1>
       <p class="lead" data-r style="--d:2; color: rgba(246,237,226,.74);">
-        WizzBox<span style="color:var(--sky)">.AI</span> is an adaptive learning platform that diagnoses each child's
-        gaps and closes them with narrated, curriculum-aligned lessons — built for <span class="em">CBSE, Grades 6–12</span>.
+        WizzBox<span style="color:var(--sky)">.AI</span> is an <span class="em">adaptive</span> learning platform that <span class="em">diagnoses</span> each child's
+        gaps and closes them with <span class="em">narrated</span>, curriculum-aligned lessons, built for CBSE, Grades 6–12.
       </p>
       <div class="rule" data-r style="--d:3; margin-top:1.8rem; max-width:60ch;"></div>
       <div class="foot" data-r style="--d:4; margin-top:1.4rem;">
@@ -435,29 +523,96 @@
 
   <!-- ============ 2 · THE PROBLEM ============ -->
   <section class="deck-slide s-paper">
-    <div class="stack" style="max-width: 64ch;">
-      <div class="kicker" data-r style="--d:0">The problem</div>
-      <h2 class="display" data-r style="--d:1">One teacher. Forty students. <span class="accent">One pace.</span></h2>
-      <p class="lead" data-r style="--d:2">
-        Every class moves at the speed of the middle. The student who's lost stays lost.
-        The student who's ahead waits. Neither is learning at their edge.
-      </p>
+
+    <div class="two-col" style="align-items:center; max-width:1180px;">
+      <div class="stack">
+        <div class="kicker" data-r style="--d:0">The problem</div>
+        <h2 class="display" data-r style="--d:1">One teacher. Forty students. <span class="accent">One pace.</span></h2>
+        <p class="lead" data-r style="--d:2">
+          Every student is in a different place, a different gap to close, a different
+          pace to learn at. One speed for the whole class fits none of them.
+        </p>
+      </div>
+
+      <!-- one exam, one score each → the spread it hides -->
+      <div class="side-visual problem-viz" data-r style="--d:3;">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:.7rem;">
+          <span style="font-family:var(--mono); font-size:.68rem; letter-spacing:.16em; text-transform:uppercase; color:var(--muted);">One exam · one number</span>
+          <span style="font-family:var(--mono); font-size:.68rem; letter-spacing:.12em; color:var(--sky-deep);">Class of 40</span>
+        </div>
+        <svg viewBox="0 0 400 270" width="100%" style="display:block;" fill="none" aria-hidden="true">
+          <defs>
+            <linearGradient id="bellFill" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="var(--sky)" stop-opacity=".26"/>
+              <stop offset="1" stop-color="var(--sky)" stop-opacity="0"/>
+            </linearGradient>
+            <clipPath id="barClip"><rect x="40" y="114" width="320" height="18" rx="9"/></clipPath>
+          </defs>
+
+          <!-- gaussian distribution -->
+          <path d="M40,108 C43.33,107.53 53.33,106.58 60,105.2 C66.67,103.82 73.33,102.22 80,99.7 C86.67,97.18 93.33,94.05 100,90.1 C106.67,86.15 113.33,81.27 120,76 C126.67,70.73 133.33,64.4 140,58.5 C146.67,52.6 153.33,45.83 160,40.6 C166.67,35.37 173.33,30.2 180,27.1 C186.67,24.0 193.33,22.0 200,22 C206.67,22.0 213.33,24.0 220,27.1 C226.67,30.2 233.33,35.37 240,40.6 C246.67,45.83 253.33,52.6 260,58.5 C266.67,64.4 273.33,70.73 280,76 C286.67,81.27 293.33,86.15 300,90.1 C306.67,94.05 313.33,97.18 320,99.7 C326.67,102.22 333.33,103.82 340,105.2 C346.67,106.58 356.67,107.53 360,108 L360,110 L40,110 Z" fill="url(#bellFill)"/>
+          <path d="M40,108 C43.33,107.53 53.33,106.58 60,105.2 C66.67,103.82 73.33,102.22 80,99.7 C86.67,97.18 93.33,94.05 100,90.1 C106.67,86.15 113.33,81.27 120,76 C126.67,70.73 133.33,64.4 140,58.5 C146.67,52.6 153.33,45.83 160,40.6 C166.67,35.37 173.33,30.2 180,27.1 C186.67,24.0 193.33,22.0 200,22 C206.67,22.0 213.33,24.0 220,27.1 C226.67,30.2 233.33,35.37 240,40.6 C246.67,45.83 253.33,52.6 260,58.5 C266.67,64.4 273.33,70.73 280,76 C286.67,81.27 293.33,86.15 300,90.1 C306.67,94.05 313.33,97.18 320,99.7 C326.67,102.22 333.33,103.82 340,105.2 C346.67,106.58 356.67,107.53 360,108" stroke="var(--sky-deep)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+
+          <!-- distribution bar: lower | mid | higher -->
+          <g clip-path="url(#barClip)">
+            <rect x="40"    y="114" width="106.7" height="18" fill="var(--amber)" opacity=".9"/>
+            <rect x="146.7" y="114" width="106.6" height="18" fill="var(--sky)"   opacity=".9"/>
+            <rect x="253.3" y="114" width="106.7" height="18" fill="var(--teal)"  opacity=".9"/>
+            <rect x="145.7" y="114" width="2" height="18" fill="var(--paper-2)"/>
+            <rect x="252.3" y="114" width="2" height="18" fill="var(--paper-2)"/>
+          </g>
+          <rect x="40" y="114" width="320" height="18" rx="9" fill="none" stroke="var(--line)" stroke-width="1"/>
+
+          <!-- band labels -->
+          <text x="93"  y="148" text-anchor="middle" font-family="var(--mono)" font-size="10" letter-spacing="1.5" fill="var(--muted)">LOWER</text>
+          <text x="200" y="148" text-anchor="middle" font-family="var(--mono)" font-size="10" letter-spacing="1.5" fill="var(--muted)">MID</text>
+          <text x="307" y="148" text-anchor="middle" font-family="var(--mono)" font-size="10" letter-spacing="1.5" fill="var(--muted)">HIGHER</text>
+
+          <!-- LEFT persona under LOWER, low score -->
+          <g fill="var(--muted)">
+            <circle cx="93" cy="174" r="8"/>
+            <path d="M79,202 v-3 a14,14 0 0 1 28,0 v3 Z"/>
+          </g>
+          <text x="93" y="239" text-anchor="middle" font-family="var(--hand)" font-size="25" font-weight="700" fill="var(--amber)">3 / 10</text>
+          <path transform="translate(93,233) rotate(-5) scale(1.2)" d="M27,-7 C31,-18 13,-23 -3,-21 C-20,-19 -31,-8 -29,6 C-27,18 -8,23 9,20 C25,17 32,3 26,-9 C22,-16 15,-19 8,-20" stroke="var(--amber)" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+
+          <!-- MID persona under MID, middle score -->
+          <g fill="var(--muted)">
+            <circle cx="200" cy="174" r="8"/>
+            <path d="M186,202 v-3 a14,14 0 0 1 28,0 v3 Z"/>
+          </g>
+          <text x="200" y="239" text-anchor="middle" font-family="var(--hand)" font-size="25" font-weight="700" fill="var(--sky-deep)">6 / 10</text>
+          <path transform="translate(200,233) rotate(2) scale(1.2)" d="M31,1 C30,-15 12,-22 -4,-20 C-21,-18 -31,-6 -28,8 C-25,19 -6,23 10,19 C26,15 31,1 25,-10 C21,-16 13,-19 5,-19 C-1,-19 -5,-16 -7,-13" stroke="var(--sky-deep)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+
+          <!-- RIGHT persona under HIGHER, high score -->
+          <g fill="var(--muted)">
+            <circle cx="307" cy="174" r="8"/>
+            <path d="M293,202 v-3 a14,14 0 0 1 28,0 v3 Z"/>
+          </g>
+          <text x="307" y="239" text-anchor="middle" font-family="var(--hand)" font-size="25" font-weight="700" fill="var(--teal)">9 / 10</text>
+          <path transform="translate(307,233) rotate(4) scale(1.2)" d="M32,-4 C34,-18 16,-24 -1,-22 C-21,-21 -33,-9 -31,5 C-29,19 -9,24 9,21 C27,18 35,4 29,-9 C25,-16 18,-19 10,-21 C4,-22 0,-21 -5,-18" stroke="var(--teal)" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </svg>
+        <p style="margin-top:.9rem; text-align:center; font-family:var(--serif); font-size:clamp(.95rem,1.3vw,1.12rem); line-height:1.3; color:var(--muted); letter-spacing:-.005em;">
+          A score says how much, never <em style="font-style:italic; color:var(--sky-deep); font-weight:500;">what</em> to teach, or <em style="font-style:italic; color:var(--sky-deep); font-weight:500;">how</em>.
+        </p>
+      </div>
     </div>
-    <div class="cards three" data-r style="--d:3; margin-top: clamp(2rem,4vh,3rem); max-width: 1100px;">
+
+    <div class="cards three" data-r style="--d:4; margin-top: clamp(1.6rem,3.5vh,2.6rem); max-width: 1180px;">
       <div class="card">
         <span class="cn">01</span>
-        <div class="ct">The struggler falls further behind</div>
-        <div class="cb">Missed a prerequisite weeks ago — now every new lesson lands on a shaky foundation.</div>
+        <div class="ct">The student who's behind</div>
+        <div class="cb">A missing prerequisite means every new lesson lands on a shaky foundation.</div>
       </div>
       <div class="card">
         <span class="cn">02</span>
-        <div class="ct">The advanced student disengages</div>
-        <div class="cb">Already knows it, but has no path forward. Boredom quietly becomes apathy.</div>
+        <div class="ct">The student keeping up</div>
+        <div class="cb">Fine on the surface, but with quiet gaps no one stops to catch.</div>
       </div>
       <div class="card">
         <span class="cn">03</span>
-        <div class="ct">The gaps stay invisible</div>
-        <div class="cb">A single exam score hides <em>which</em> concept actually broke — until it's too late to fix.</div>
+        <div class="ct">The student racing ahead</div>
+        <div class="cb">Already knows it, with no path forward. Boredom quietly becomes apathy.</div>
       </div>
     </div>
   </section>
@@ -467,14 +622,15 @@
     <div class="two-col">
       <div class="stack">
         <div class="kicker" data-r style="--d:0">Why it compounds</div>
-        <h2 class="display sm" data-r style="--d:1">A gap in Grade 7 becomes a <span class="accent">wall</span> in Grade 10.</h2>
+        <h2 class="display sm" data-r style="--d:1">A gap in Grade 6 becomes a <span class="accent">wall</span> in Grade 9.</h2>
         <p class="lead" data-r style="--d:2">
-          Knowledge isn't a list — it's a graph. Miss <span class="em">fractions</span>, and ratios,
-          algebra, and stoichiometry all wobble.
+          Knowledge isn't a list, it's a graph. Miss <span class="em">equivalent fractions</span> in Grade 6, and
+          adding fractions, <span class="em">ratios and proportions</span>, and every algebraic expression built on them
+          wobble in Grade 9.
         </p>
         <p class="lead" data-r style="--d:3">
-          Traditional tests show the symptom — a low score. They never show the
-          <span class="ink-accent">missing prerequisite underneath it.</span>
+          Traditional tests show the symptom, a failed sum like <span class="em">3/4 + 1/6</span>.
+          They never show the <span class="ink-accent">missing prerequisite underneath it.</span>
         </p>
       </div>
       <div class="side-visual" data-r style="--d:2; display:grid; place-items:center;">
@@ -497,7 +653,20 @@
           <circle cx="70"  cy="320" r="10" fill="var(--navy)" opacity=".5"/>
           <circle cx="350" cy="320" r="10" fill="var(--navy)" opacity=".5"/>
           <circle cx="200" cy="390" r="12" fill="var(--navy)" opacity=".35"/>
-          <text x="200" y="350" text-anchor="middle" font-family="var(--mono)" font-size="12" fill="var(--amber)" letter-spacing="2">MISSING PREREQUISITE</text>
+
+          <!-- concept labels, rooted in the CBSE Grade-6 "Fractions" knowledge graph -->
+          <g font-family="var(--mono)">
+            <text x="210" y="37"  text-anchor="middle" font-size="10"   font-weight="600" fill="var(--ink)">Fractions</text>
+            <text x="92"  y="174" text-anchor="end"    font-size="10"   fill="var(--ink)">Unit fraction</text>
+            <text x="328" y="174" text-anchor="start"  font-size="10"   fill="var(--ink)">Equal share</text>
+            <text x="70"  y="344" text-anchor="middle" font-size="9.5"  fill="var(--muted)">Compare</text>
+            <text x="350" y="344" text-anchor="middle" font-size="9.5"  fill="var(--muted)">Lowest terms</text>
+            <text x="200" y="412" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--ink)">Add fractions</text>
+            <!-- the missing prerequisite -->
+            <text x="224" y="295" text-anchor="start" font-size="10.5" font-weight="700" fill="var(--amber)">Equivalent</text>
+            <text x="224" y="307" text-anchor="start" font-size="10.5" font-weight="700" fill="var(--amber)">fractions</text>
+            <text x="224" y="319" text-anchor="start" font-size="7"    letter-spacing="1.5" fill="var(--amber)">MISSING</text>
+          </g>
         </svg>
       </div>
     </div>
@@ -509,15 +678,15 @@
       <div class="kicker" data-r style="--d:0">Introducing</div>
       <h2 class="wordmark" data-r style="--d:1">WizzBox<span class="dot">.AI</span></h2>
       <p class="lead" data-r style="--d:2; color: rgba(246,237,226,.8); font-size: clamp(1.1rem,1.7vw,1.5rem); max-width: 40ch;">
-        An AI tutor for every student — and an analytics team for every teacher.
+        An AI tutor for every student, and an analytics team for every teacher.
       </p>
       <div class="pills" data-r style="--d:3; margin-top: 1.4rem;">
         <span class="pill solid">Adaptive Assessment</span>
         <span class="pill solid">Cinematic Lessons</span>
-        <span class="pill solid">AI Orchestration</span>
+        <span class="pill solid">Dynamic Routing</span>
       </div>
       <p class="lead" data-r style="--d:4; margin-top:1.6rem; max-width: 52ch; color: rgba(246,237,226,.6);">
-        Three systems working as one continuous loop — diagnosing gaps, teaching to them,
+        Three systems working as one continuous loop, diagnosing gaps, teaching to them,
         and checking mastery before moving on.
       </p>
     </div>
@@ -548,29 +717,28 @@
       <div class="step">
         <div class="sk"><b>4</b> ADAPT</div>
         <div class="st">Re-route the path</div>
-        <div class="sb">The orchestrator drills deeper or advances — automatically, per student.</div>
+        <div class="sb">The orchestrator drills deeper or advances, automatically, per student.</div>
       </div>
     </div>
     <p class="lead" data-r style="--d:3; margin-top: clamp(1.6rem,3vh,2.4rem);">
-      An <span class="ink-accent">AI orchestrator</span> runs this loop for every student, continuously.
+      The <span class="ink-accent">Orchestrator</span> runs this loop for every student, continuously.
     </p>
   </section>
 
-  <!-- ============ 6 · PILLAR 1 — ASSESSMENT ============ -->
+  <!-- ============ 6 · PILLAR 1 · ASSESSMENT ============ -->
   <section class="deck-slide s-paper-2">
     <div class="two-col">
       <div class="stack">
         <div class="row" style="align-items:baseline; gap:1.2rem;">
           <span class="eyebrow-num" data-r style="--d:0">01</span>
-          <div class="kicker" data-r style="--d:0" >Pillar — Assessment</div>
+          <div class="kicker" data-r style="--d:0" >Pillar · Assessment</div>
         </div>
         <h2 class="display sm" data-r style="--d:1">Assessments that find the <span class="accent">real</span> gap.</h2>
         <ul class="feat" data-r style="--d:2">
-          <li><strong>Real-time difficulty</strong> — questions adapt on a 1–10 scale as the student answers.</li>
-          <li><strong>Traverses the knowledge graph</strong> down to the exact prerequisite that broke.</li>
-          <li><strong>Bloom's-aware</strong> — distinguishes recall from real application.</li>
-          <li>Tracks time, confidence, and an honest <span class="em">"I don't know"</span> option.</li>
-          <li>Returns the <span class="em">missing concept</span> — not just a score.</li>
+          <li><strong>A diagnosis, not a grade</strong>, each question shows <span class="em">why</span>, not just a <span class="em">number</span>.</li>
+          <li><strong>Wrong answers open a conversation</strong>, encouraging on the surface, diagnostic underneath.</li>
+          <li><strong>Slip or real gap?</strong> It tells them apart, and names the exact concept.</li>
+          <li><strong>Sharp and fast</strong>, a few questions, minutes to the gap.</li>
         </ul>
       </div>
       <div class="side-visual" data-r style="--d:3;">
@@ -579,23 +747,58 @@
             <span class="mock-title">Adaptive quiz · live</span>
             <div class="dots3"><i></i><i></i><i></i></div>
           </div>
-          <div style="font-family:var(--serif); font-size:1.15rem; font-weight:500; margin-bottom:1rem; line-height:1.3;">
+          <div style="font-family:var(--serif); font-size:1.12rem; font-weight:500; margin-bottom:.55rem; line-height:1.3;">
             Simplify: 3/4 + 1/6
           </div>
-          <div class="bar-row"><span class="bar-name" style="width:auto; flex:1;">A · 11/12</span><span class="bar-val" style="color:var(--teal)">✓</span></div>
-          <div class="bar-row"><span class="bar-name" style="width:auto; flex:1; opacity:.55;">B · 4/10</span></div>
-          <div class="bar-row"><span class="bar-name" style="width:auto; flex:1; opacity:.55;">C · 4/24</span></div>
-          <div class="rule" style="margin:1rem 0;"></div>
-          <div style="display:flex; justify-content:space-between; font-family:var(--mono); font-size:.74rem; color:var(--muted); letter-spacing:.06em;">
-            <span>DIFFICULTY <b style="color:var(--sky-deep)">6 / 10</b></span>
-            <span>NODE <b style="color:var(--teal)">fractions.lcm</b></span>
+          <div class="bar-row"><span class="bar-name" style="width:auto; flex:1; opacity:.5;">A · 11/12</span><span class="bar-val" style="color:var(--teal); opacity:.55;">✓</span></div>
+          <div class="bar-row" style="background:rgba(201,119,47,.12); border-radius:9px; padding:.2rem .5rem; margin:.3rem -.5rem;"><span class="bar-name" style="width:auto; flex:1; color:var(--ink); font-weight:600;">B · 4/10</span><span class="bar-val" style="color:var(--amber); font-weight:700;">✗</span></div>
+          <div class="bar-row"><span class="bar-name" style="width:auto; flex:1; opacity:.5;">C · 4/24</span></div>
+
+          <div class="rule" style="margin:.6rem 0 .55rem;"></div>
+
+          <!-- STUDENT-FACING: each follow-up is directed by the previous answer; encouraging on top, diagnostic underneath, never corrective -->
+          <div style="display:flex; flex-direction:column; gap:.3rem;">
+            <div style="display:flex; align-items:flex-end; gap:.45rem;">
+              <span style="font-family:var(--mono); font-size:.62rem; letter-spacing:.1em; text-transform:uppercase; color:var(--teal); flex:none; padding-bottom:.34rem;">Tutor</span>
+              <div style="background:rgba(31,148,136,.12); color:var(--ink); font-size:.92rem; line-height:1.34; padding:.42rem .68rem; border-radius:13px 13px 13px 3px; max-width:70%;">How did you get to 4/10? Walk me through it.</div>
+            </div>
+            <div style="display:flex; align-items:flex-end; gap:.45rem; flex-direction:row-reverse;">
+              <span style="font-family:var(--mono); font-size:.62rem; letter-spacing:.1em; text-transform:uppercase; color:var(--sky-deep); flex:none; padding-bottom:.34rem;">You</span>
+              <div style="background:var(--paper); border:1px solid var(--line); color:var(--ink); font-size:.92rem; line-height:1.34; padding:.42rem .68rem; border-radius:13px 13px 3px 13px; max-width:70%;">i added 3 + 1 on top and 4 + 6 below</div>
+            </div>
+            <div style="display:flex; align-items:flex-end; gap:.45rem;">
+              <span style="font-family:var(--mono); font-size:.62rem; letter-spacing:.1em; text-transform:uppercase; color:var(--teal); flex:none; padding-bottom:.34rem;">Tutor</span>
+              <div style="background:rgba(31,148,136,.12); color:var(--ink); font-size:.92rem; line-height:1.34; padding:.42rem .68rem; border-radius:13px 13px 13px 3px; max-width:70%;">Quick check, what's 1/2 + 1/2?</div>
+            </div>
+            <div style="display:flex; align-items:flex-end; gap:.45rem; flex-direction:row-reverse;">
+              <span style="font-family:var(--mono); font-size:.62rem; letter-spacing:.1em; text-transform:uppercase; color:var(--sky-deep); flex:none; padding-bottom:.34rem;">You</span>
+              <div style="background:var(--paper); border:1px solid var(--line); color:var(--ink); font-size:.92rem; line-height:1.34; padding:.42rem .68rem; border-radius:13px 13px 3px 13px; max-width:70%;">2/4</div>
+            </div>
+            <div style="display:flex; align-items:flex-end; gap:.45rem;">
+              <span style="font-family:var(--mono); font-size:.62rem; letter-spacing:.1em; text-transform:uppercase; color:var(--teal); flex:none; padding-bottom:.34rem;">Tutor</span>
+              <div style="background:rgba(31,148,136,.12); color:var(--ink); font-size:.92rem; line-height:1.34; padding:.42rem .68rem; border-radius:13px 13px 13px 3px; max-width:70%;">Two half-glasses of water poured into one glass, how full is it?</div>
+            </div>
+            <div style="display:flex; align-items:flex-end; gap:.45rem; flex-direction:row-reverse;">
+              <span style="font-family:var(--mono); font-size:.62rem; letter-spacing:.1em; text-transform:uppercase; color:var(--sky-deep); flex:none; padding-bottom:.34rem;">You</span>
+              <div style="background:var(--paper); border:1px solid var(--line); color:var(--ink); font-size:.92rem; line-height:1.34; padding:.42rem .68rem; border-radius:13px 13px 3px 13px; max-width:70%;">oh a full glass so 1 not 2/4 the bottoms should not add</div>
+            </div>
+          </div>
+
+          <!-- BEHIND THE SCENES: the silent diagnosis the student never sees -->
+          <div style="margin-top:clamp(1.2rem,1.8vw,1.7rem); background:var(--navy); border-radius:11px; padding:.6rem .75rem;">
+            <div style="font-family:var(--mono); font-size:.55rem; letter-spacing:.13em; text-transform:uppercase; color:var(--teal-br); margin-bottom:.4rem;">
+              Behind the scenes · not shown to student
+            </div>
+            <div style="font-family:var(--mono); font-size:.7rem; color:var(--amber); letter-spacing:.03em;">
+              ⚑ Gap identified: common denominator (LCM) <span style="color:rgba(246,237,226,.5);">· fractions.lcm</span>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ============ 7 · PILLAR 2 — CINEMATIC LESSONS ============ -->
+  <!-- ============ 7 · PILLAR 2 · CINEMATIC LESSONS ============ -->
   <section class="deck-slide s-paper">
     <div class="two-col">
       <div class="side-visual" data-r style="--d:3; order:0;">
@@ -604,32 +807,73 @@
             <span class="mock-title" style="color: rgba(246,237,226,.6)">Cinematic lesson · playing</span>
             <div class="dots3"><i style="background:var(--sky)"></i><i style="background:rgba(246,237,226,.25)"></i><i style="background:rgba(246,237,226,.25)"></i></div>
           </div>
-          <div style="font-family:var(--serif); font-size:clamp(1.3rem,2vw,1.7rem); font-weight:500; line-height:1.25; margin: .4rem 0 1.4rem;">
+          <!-- the lesson slide: a non-interactive viz being taught -->
+          <div style="border:1px solid rgba(246,237,226,.13); border-radius:10px; background:rgba(255,255,255,.03); padding:.9rem 1rem;">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:1rem;">
+              <!-- math equation, rendered -->
+              <div style="display:flex; align-items:center; gap:.35rem; font-size:1.5rem; color:rgba(246,237,226,.92);">
+                <span class="lfrac"><span>3</span><span class="d den-glow">4</span></span>
+                <span style="opacity:.55;">+</span>
+                <span class="lfrac"><span>1</span><span class="d den-glow" style="animation-delay:.7s;">6</span></span>
+                <span style="opacity:.45; font-size:1.1rem;">= ?</span>
+              </div>
+              <!-- slide text, on the right -->
+              <div style="text-align:right;">
+                <div style="font-family:var(--mono); font-size:.54rem; letter-spacing:.13em; text-transform:uppercase; color:var(--teal-br); margin-bottom:.3rem;">Lesson · Fractions</div>
+                <div style="font-family:var(--serif); font-size:.92rem; color:rgba(246,237,226,.82); line-height:1.25;">Re-slice to 12ths<br>now they line up.</div>
+              </div>
+            </div>
+            <!-- slice-size viz with the LCM (12) grid overlaid as a dashed separator -->
+            <div style="margin-top:.85rem; display:flex; flex-direction:column; gap:.4rem;">
+              <div style="display:flex; align-items:center; gap:.55rem;">
+                <span style="font-family:var(--mono); font-size:.66rem; color:rgba(246,237,226,.55); width:1.5rem;">1/4</span>
+                <div style="position:relative; flex:1;">
+                  <div style="display:flex; gap:2px;">
+                    <span class="slice-on" style="flex:1; height:16px; border-radius:3px; background:var(--sky);"></span>
+                    <span style="flex:1; height:16px; border-radius:3px; background:rgba(246,237,226,.1);"></span>
+                    <span style="flex:1; height:16px; border-radius:3px; background:rgba(246,237,226,.1);"></span>
+                    <span style="flex:1; height:16px; border-radius:3px; background:rgba(246,237,226,.1);"></span>
+                  </div>
+                  <div class="lcm-grid"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+                </div>
+              </div>
+              <div style="display:flex; align-items:center; gap:.55rem;">
+                <span style="font-family:var(--mono); font-size:.66rem; color:rgba(246,237,226,.55); width:1.5rem;">1/6</span>
+                <div style="position:relative; flex:1;">
+                  <div style="display:flex; gap:2px;">
+                    <span class="slice-on" style="flex:1; height:16px; border-radius:3px; background:var(--teal-br); animation-delay:.7s;"></span>
+                    <span style="flex:1; height:16px; border-radius:3px; background:rgba(246,237,226,.1);"></span>
+                    <span style="flex:1; height:16px; border-radius:3px; background:rgba(246,237,226,.1);"></span>
+                    <span style="flex:1; height:16px; border-radius:3px; background:rgba(246,237,226,.1);"></span>
+                    <span style="flex:1; height:16px; border-radius:3px; background:rgba(246,237,226,.1);"></span>
+                    <span style="flex:1; height:16px; border-radius:3px; background:rgba(246,237,226,.1);"></span>
+                  </div>
+                  <div class="lcm-grid"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+                </div>
+              </div>
+              <!-- legend: what the new (dashed) separator means -->
+              <div style="display:flex; align-items:center; gap:.4rem; padding-left:2.05rem; margin-top:.05rem;">
+                <span style="display:inline-block; width:16px; border-top:1.5px dashed var(--amber);"></span>
+                <span style="font-family:var(--mono); font-size:.58rem; letter-spacing:.04em; color:var(--amber);">split into the LCM, 12 parts that line up</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- spoken narration (subtitle) -->
+          <div style="font-family:var(--serif); font-size:clamp(1.02rem,1.5vw,1.22rem); font-weight:500; line-height:1.3; margin:1rem 0; text-align:center; color:rgba(246,237,226,.9);">
             "Think of the denominator as the <span style="color:var(--sky)">size of each slice</span>…"
           </div>
-          <!-- waveform -->
-          <svg viewBox="0 0 300 40" width="100%" height="34" aria-hidden="true">
-            <g fill="var(--teal-br)">
-              <rect x="2"  y="14" width="3" height="12" rx="1.5"/>
-              <rect x="10" y="8"  width="3" height="24" rx="1.5"/>
-              <rect x="18" y="4"  width="3" height="32" rx="1.5"/>
-              <rect x="26" y="12" width="3" height="16" rx="1.5"/>
-              <rect x="34" y="2"  width="3" height="36" rx="1.5"/>
-              <rect x="42" y="10" width="3" height="20" rx="1.5"/>
-              <rect x="50" y="6"  width="3" height="28" rx="1.5"/>
-              <rect x="58" y="16" width="3" height="8"  rx="1.5"/>
-              <rect x="66" y="9"  width="3" height="22" rx="1.5"/>
-              <rect x="74" y="3"  width="3" height="34" rx="1.5"/>
-              <rect x="82" y="13" width="3" height="14" rx="1.5"/>
-              <rect x="90" y="7"  width="3" height="26" rx="1.5" fill="var(--sky)"/>
-              <rect x="98" y="11" width="3" height="18" rx="1.5" fill="var(--sky)"/>
-              <rect x="106" y="5" width="3" height="30" rx="1.5" fill="rgba(246,237,226,.3)"/>
-              <rect x="114" y="14" width="3" height="12" rx="1.5" fill="rgba(246,237,226,.3)"/>
-              <rect x="122" y="9" width="3" height="22" rx="1.5" fill="rgba(246,237,226,.3)"/>
-              <rect x="130" y="6" width="3" height="28" rx="1.5" fill="rgba(246,237,226,.3)"/>
-              <rect x="138" y="13" width="3" height="14" rx="1.5" fill="rgba(246,237,226,.3)"/>
-            </g>
-          </svg>
+
+          <!-- narration audio, centered & animated -->
+          <div class="eq" aria-hidden="true">
+            <i style="animation-delay:0s"></i><i style="animation-delay:-.5s"></i><i style="animation-delay:-.2s"></i>
+            <i style="animation-delay:-.8s"></i><i style="animation-delay:-.3s"></i><i style="animation-delay:-.6s"></i>
+            <i style="animation-delay:-.1s"></i><i style="animation-delay:-.7s"></i><i style="animation-delay:-.35s"></i>
+            <i style="animation-delay:-.9s"></i><i style="animation-delay:-.25s"></i><i style="animation-delay:-.55s"></i>
+            <i style="animation-delay:-.15s"></i><i style="animation-delay:-.75s"></i><i style="animation-delay:-.45s"></i>
+            <i style="animation-delay:-.65s"></i><i style="animation-delay:-.05s"></i><i style="animation-delay:-.85s"></i>
+          </div>
+
           <div style="display:flex; justify-content:space-between; font-family:var(--mono); font-size:.72rem; color:rgba(246,237,226,.55); letter-spacing:.06em; margin-top:1rem;">
             <span>● NARRATING</span><span>SUBTITLES ON</span><span>01:12 / 04:30</span>
           </div>
@@ -638,12 +882,12 @@
       <div class="stack">
         <div class="row" style="align-items:baseline; gap:1.2rem;">
           <span class="eyebrow-num" data-r style="--d:0">02</span>
-          <div class="kicker" data-r style="--d:0">Pillar — Lessons</div>
+          <div class="kicker" data-r style="--d:0">Pillar · Lessons</div>
         </div>
         <h2 class="display sm" data-r style="--d:1">Lessons like the best teacher <span class="accent">you ever had.</span></h2>
         <ul class="feat" data-r style="--d:2">
-          <li><strong>Narrated &amp; animated</strong> — slide-based lessons with natural, human-quality voice.</li>
-          <li><strong>Built around the gap</strong> — generated for the student's specific missing concept.</li>
+          <li><strong>Narrated &amp; animated</strong>, slide-based lessons with natural, human-quality voice.</li>
+          <li><strong>Built around the gap</strong>, generated for the student's specific missing concept.</li>
           <li><strong>Embedded check-questions</strong> that pause the narration and resume when answered.</li>
           <li>Auto-generated <span class="em">visuals, diagrams, flashcards &amp; glossary.</span></li>
         </ul>
@@ -651,43 +895,87 @@
     </div>
   </section>
 
-  <!-- ============ 8 · PILLAR 3 — ORCHESTRATION / GRAPH ============ -->
+  <!-- ============ 8 · PILLAR 3 · ORCHESTRATION / GRAPH ============ -->
   <section class="deck-slide s-paper-2">
     <div class="two-col">
       <div class="stack">
         <div class="row" style="align-items:baseline; gap:1.2rem;">
           <span class="eyebrow-num" data-r style="--d:0">03</span>
-          <div class="kicker" data-r style="--d:0">Pillar — Orchestration</div>
+          <div class="kicker" data-r style="--d:0">Pillar · Orchestration</div>
         </div>
-        <h2 class="display sm" data-r style="--d:1">The engine: a curriculum <span class="accent">knowledge graph.</span></h2>
+        <h2 class="display sm" data-r style="--d:1">The engine: an <span class="accent">orchestrator</span> on the knowledge graph.</h2>
         <ul class="feat" data-r style="--d:2">
           <li>Every concept mapped with its <strong>prerequisites and dependencies.</strong></li>
           <li>The orchestrator sequences <span class="em">prerequisite → target → checkpoint.</span></li>
-          <li><strong>70% mastery</strong> required before a student advances a node.</li>
+          <li><strong>A sprint for some, a climb for others</strong>, it races past what's mastered and goes deep where it isn't.</li>
+          <li><strong>≈ 2,000 ways to teach a lesson</strong>, the orchestrator picks the one that fits each student.</li>
           <li>Nothing is skipped. Nothing is wasted. The path is <span class="em">unique to each child.</span></li>
         </ul>
       </div>
       <div class="side-visual" data-r style="--d:3; display:grid; place-items:center;">
-        <svg viewBox="0 0 420 380" width="100%" style="max-width:420px; color: var(--navy);" fill="none" aria-hidden="true">
-          <line class="edge" x1="80" y1="80" x2="200" y2="60" style="stroke:var(--navy); opacity:.25"/>
-          <line class="edge" x1="200" y1="60" x2="320" y2="110" style="stroke:var(--navy); opacity:.25"/>
-          <line class="edge" x1="80" y1="80" x2="120" y2="210" style="stroke:var(--teal); stroke-width:2.5; opacity:.85"/>
-          <line class="edge" x1="120" y1="210" x2="230" y2="200" style="stroke:var(--teal); stroke-width:2.5; opacity:.85"/>
-          <line class="edge" x1="230" y1="200" x2="320" y2="110" style="stroke:var(--sky); stroke-width:2.5; opacity:.85; stroke-dasharray:6 5;"/>
-          <line class="edge" x1="230" y1="200" x2="190" y2="320" style="stroke:var(--navy); opacity:.2"/>
-          <!-- mastered -->
-          <circle cx="80"  cy="80"  r="14" fill="var(--teal)"/><text x="80" y="85" text-anchor="middle" font-size="13" fill="#fff" font-weight="700">✓</text>
-          <circle cx="120" cy="210" r="14" fill="var(--teal)"/><text x="120" y="215" text-anchor="middle" font-size="13" fill="#fff" font-weight="700">✓</text>
-          <!-- current -->
-          <circle cx="230" cy="200" r="17" fill="var(--sky)"/>
-          <circle cx="230" cy="200" r="24" fill="none" stroke="var(--sky)" stroke-width="2" opacity=".4" class="pulse"/>
-          <text x="230" y="206" text-anchor="middle" font-size="12" fill="#fff" font-weight="700">NOW</text>
-          <!-- locked / future -->
-          <circle cx="200" cy="60"  r="12" fill="var(--navy)" opacity=".3"/>
-          <circle cx="320" cy="110" r="13" fill="#fff" stroke="var(--sky)" stroke-width="2.5" stroke-dasharray="5 4"/>
-          <circle cx="190" cy="320" r="12" fill="var(--navy)" opacity=".22"/>
-          <text x="230" y="270" text-anchor="middle" font-family="var(--mono)" font-size="11" fill="var(--teal)" letter-spacing="2">PERSONALISED PATH</text>
+        <svg id="journeyGraph" viewBox="0 0 420 425" width="100%" style="max-width:420px; color: var(--navy);" fill="none" aria-hidden="true">
+          <!-- edges (faint) -->
+          <g stroke="var(--navy)" stroke-width="1.5" opacity=".16">
+            <line x1="210" y1="60" x2="110" y2="170"/>
+            <line x1="210" y1="60" x2="310" y2="170"/>
+            <line x1="110" y1="170" x2="70" y2="320"/>
+            <line x1="110" y1="170" x2="200" y2="300"/>
+            <line x1="310" y1="170" x2="200" y2="300"/>
+            <line x1="310" y1="170" x2="350" y2="320"/>
+            <line x1="200" y1="300" x2="200" y2="390"/>
+          </g>
+
+          <g class="jn" data-n="frac">
+            <circle class="ring" cx="210" cy="60" r="18" fill="none" stroke="var(--amber)" stroke-width="2"/>
+            <circle class="dot" cx="210" cy="60" r="11"/>
+            <path class="chk" d="M205,60.5 L208.5,64 L215,56" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            <text class="lbl" x="210" y="37" text-anchor="middle" font-family="var(--mono)" font-size="10">Fractions</text>
+          </g>
+          <g class="jn" data-n="unit">
+            <circle class="ring" cx="110" cy="170" r="18" fill="none" stroke="var(--amber)" stroke-width="2"/>
+            <circle class="dot" cx="110" cy="170" r="11"/>
+            <path class="chk" d="M105,170.5 L108.5,174 L115,166" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            <text class="lbl" x="92" y="174" text-anchor="end" font-family="var(--mono)" font-size="10">Unit fraction</text>
+          </g>
+          <g class="jn" data-n="equal">
+            <circle class="ring" cx="310" cy="170" r="18" fill="none" stroke="var(--amber)" stroke-width="2"/>
+            <circle class="dot" cx="310" cy="170" r="11"/>
+            <path class="chk" d="M305,170.5 L308.5,174 L315,166" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            <text class="lbl" x="328" y="174" text-anchor="start" font-family="var(--mono)" font-size="10">Equal share</text>
+          </g>
+          <g class="jn" data-n="equiv">
+            <circle class="ring" cx="200" cy="300" r="18" fill="none" stroke="var(--amber)" stroke-width="2"/>
+            <circle class="dot" cx="200" cy="300" r="11"/>
+            <path class="chk" d="M195,300.5 L198.5,304 L205,296" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            <text class="lbl" x="222" y="304" text-anchor="start" font-family="var(--mono)" font-size="10">Equivalent fractions</text>
+          </g>
+          <g class="jn" data-n="compare">
+            <circle class="ring" cx="70" cy="320" r="17" fill="none" stroke="var(--amber)" stroke-width="2"/>
+            <circle class="dot" cx="70" cy="320" r="10"/>
+            <path class="chk" d="M65,320.5 L68.5,324 L75,316" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            <text class="lbl" x="70" y="345" text-anchor="middle" font-family="var(--mono)" font-size="9.5">Compare</text>
+          </g>
+          <g class="jn" data-n="lowest">
+            <circle class="ring" cx="350" cy="320" r="17" fill="none" stroke="var(--amber)" stroke-width="2"/>
+            <circle class="dot" cx="350" cy="320" r="10"/>
+            <path class="chk" d="M345,320.5 L348.5,324 L355,316" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            <text class="lbl" x="350" y="345" text-anchor="middle" font-family="var(--mono)" font-size="9.5">Lowest terms</text>
+          </g>
+          <g class="jn" data-n="add">
+            <circle class="ring" cx="200" cy="390" r="18" fill="none" stroke="var(--amber)" stroke-width="2"/>
+            <circle class="dot" cx="200" cy="390" r="11"/>
+            <path class="chk" d="M195,390.5 L198.5,394 L205,386" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            <text class="lbl" x="200" y="414" text-anchor="middle" font-family="var(--mono)" font-size="10.5" font-weight="600">Add fractions</text>
+          </g>
         </svg>
+
+        <div style="margin-top:.6rem; text-align:center;">
+          <div id="journeyWho" style="font-family:var(--serif); font-size:clamp(1.1rem,1.7vw,1.4rem); font-weight:600; color:var(--ink); min-height:1.3em;">Walking the graph…</div>
+          <div style="margin-top:.55rem; display:flex; gap:1.1rem; justify-content:center; font-family:var(--mono); font-size:.6rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted);">
+            <span><span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--teal); margin-right:.35rem; vertical-align:middle;"></span>mastered</span>
+            <span><span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--amber); margin-right:.35rem; vertical-align:middle;"></span>taught</span>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -699,14 +987,14 @@
       <h2 class="display sm" data-r style="--d:1">Aligned to <span class="accent">CBSE.</span> Ready on day one.</h2>
     </div>
     <div class="stats" data-r style="--d:2; margin-top: clamp(2rem,4.5vh,3.4rem); max-width: 1180px;">
-      <div class="stat"><div class="sn">29,426+</div><div class="sl">curriculum-aligned assets — questions, graphs &amp; visuals</div></div>
+      <div class="stat"><div class="sn">29,426+</div><div class="sl">curriculum-aligned assets, questions, graphs &amp; visuals</div></div>
       <div class="stat"><div class="sn">6–12</div><div class="sl">grades covered, end to end</div></div>
-      <div class="stat"><div class="sn">6</div><div class="sl">subjects, across sciences &amp; mathematics</div></div>
+      <div class="stat"><div class="sn">6</div><div class="sl">subjects, across mathematics &amp; sciences</div></div>
       <div class="stat"><div class="sn">100%</div><div class="sl">chapter-level control, per class</div></div>
     </div>
     <div class="pills" data-r style="--d:3; margin-top: clamp(1.8rem,3.5vh,2.6rem);">
-      <span class="pill">Science</span>
       <span class="pill">Mathematics</span>
+      <span class="pill">Science</span>
       <span class="pill">Physics</span>
       <span class="pill">Chemistry</span>
       <span class="pill">Biology</span>
@@ -716,32 +1004,87 @@
 
   <!-- ============ 10 · FOR TEACHERS ============ -->
   <section class="deck-slide s-paper">
-    <div class="two-col">
+    <div class="two-col wide-right">
       <div class="stack">
         <div class="kicker" data-r style="--d:0">For your teachers</div>
         <h2 class="display sm" data-r style="--d:1">Less marking. <span class="accent">More teaching.</span></h2>
         <ul class="feat" data-r style="--d:2">
           <li>A <strong>live dashboard</strong> of every student's mastery, updated in real time.</li>
-          <li>See exactly <span class="em">which concept</span> each child is stuck on — not just a grade.</li>
+          <li>See exactly <span class="em">which concept</span> each child is stuck on, not just a grade.</li>
           <li><strong>Bloom's-level breakdown</strong> of where the class is strong or shaky.</li>
           <li>Give <span class="em">targeted feedback</span> to any student in a click.</li>
           <li>Toggle chapters on or off to match your <span class="em">lesson plan.</span></li>
         </ul>
       </div>
       <div class="side-visual" data-r style="--d:3;">
-        <div class="mock">
-          <div class="mock-head">
-            <span class="mock-title">Class 9-A · concept mastery</span>
-            <div class="dots3"><i></i><i></i><i></i></div>
+        <!-- concept-mastery heatmap -->
+        <div class="card" data-r style="--d:3;">
+          <div class="mock-head" style="margin-bottom:.55rem;">
+            <span class="mock-title">Class 6-A · mastery by concept</span>
+            <div style="display:flex; gap:.7rem; font-family:var(--mono); font-size:.56rem; letter-spacing:.04em; text-transform:uppercase; color:var(--muted);">
+              <span><span class="heat-chip" style="background:var(--amber)"></span>weak</span>
+              <span><span class="heat-chip" style="background:#eab308"></span>ok</span>
+              <span><span class="heat-chip" style="background:var(--teal)"></span>strong</span>
+            </div>
           </div>
-          <div class="bar-row"><span class="bar-name">Aarav</span><div class="bar-track"><div class="bar-fill" style="width:92%"></div></div><span class="bar-val">92%</span></div>
-          <div class="bar-row"><span class="bar-name">Diya</span><div class="bar-track"><div class="bar-fill" style="width:78%"></div></div><span class="bar-val">78%</span></div>
-          <div class="bar-row weak"><span class="bar-name">Kabir</span><div class="bar-track"><div class="bar-fill" style="width:41%"></div></div><span class="bar-val">41%</span></div>
-          <div class="bar-row"><span class="bar-name">Meera</span><div class="bar-track"><div class="bar-fill" style="width:85%"></div></div><span class="bar-val">85%</span></div>
-          <div class="bar-row weak"><span class="bar-name">Rohan</span><div class="bar-track"><div class="bar-fill" style="width:48%"></div></div><span class="bar-val">48%</span></div>
-          <div class="rule" style="margin:1rem 0 .8rem;"></div>
-          <div style="font-family:var(--mono); font-size:.74rem; color:var(--amber); letter-spacing:.04em;">
-            ⚑ 2 students stuck on <b>fractions.lcm</b> → lesson auto-assigned
+          <div class="heat" style="grid-template-columns: 50px repeat(6, 1fr); grid-template-rows: 56px repeat(5, 30px); margin: 1rem 0 1.15rem;">
+            <!-- highlight overlay: weakest column (Common denom., col 4) + weakest student (Kabir, row 4) -->
+            <div class="heat-hl" aria-hidden="true" style="grid-template-columns: 50px repeat(6, 1fr); grid-template-rows: 56px repeat(5, 30px);">
+              <i style="grid-column: 4; grid-row: 1 / -1; margin:-5px -4px;"></i>
+              <i style="grid-column: 1 / -1; grid-row: 4; margin:-4px -5px;"></i>
+            </div>
+            <div></div>
+            <div class="heat-h"><span>Equal share</span></div>
+            <div class="heat-h"><span>Equivalent</span></div>
+            <div class="heat-h"><span>Common denom.</span></div>
+            <div class="heat-h"><span>Add &amp; subtract</span></div>
+            <div class="heat-h"><span>Compare</span></div>
+            <div class="heat-h"><span>Lowest terms</span></div>
+
+            <div class="heat-rl"><span>Aarav</span></div>
+            <div class="heat-c"><div class="hb" style="width:96%; background:var(--teal)"></div></div>
+            <div class="heat-c"><div class="hb" style="width:90%; background:var(--teal)"></div></div>
+            <div class="heat-c"><div class="hb" style="width:58%; background:#eab308"></div></div>
+            <div class="heat-c"><div class="hb" style="width:94%; background:var(--teal)"></div></div>
+            <div class="heat-c"><div class="hb" style="width:90%; background:var(--teal)"></div></div>
+            <div class="heat-c"><div class="hb" style="width:95%; background:var(--teal)"></div></div>
+
+            <div class="heat-rl"><span>Diya</span></div>
+            <div class="heat-c"><div class="hb" style="width:84%; background:var(--teal)"></div></div>
+            <div class="heat-c"><div class="hb" style="width:76%; background:var(--teal)"></div></div>
+            <div class="heat-c"><div class="hb" style="width:52%; background:#eab308"></div></div>
+            <div class="heat-c"><div class="hb" style="width:82%; background:var(--teal)"></div></div>
+            <div class="heat-c"><div class="hb" style="width:74%; background:#eab308"></div></div>
+            <div class="heat-c"><div class="hb" style="width:86%; background:var(--teal)"></div></div>
+
+            <div class="heat-rl"><span>Kabir</span></div>
+            <div class="heat-c"><div class="hb" style="width:56%; background:#eab308"></div></div>
+            <div class="heat-c"><div class="hb" style="width:36%; background:var(--amber)"></div></div>
+            <div class="heat-c"><div class="hb" style="width:24%; background:var(--amber)"></div></div>
+            <div class="heat-c"><div class="hb" style="width:40%; background:var(--amber)"></div></div>
+            <div class="heat-c"><div class="hb" style="width:48%; background:var(--amber)"></div></div>
+            <div class="heat-c"><div class="hb" style="width:44%; background:var(--amber)"></div></div>
+
+            <div class="heat-rl"><span>Meera</span></div>
+            <div class="heat-c"><div class="hb" style="width:90%; background:var(--teal)"></div></div>
+            <div class="heat-c"><div class="hb" style="width:82%; background:var(--teal)"></div></div>
+            <div class="heat-c"><div class="hb" style="width:56%; background:#eab308"></div></div>
+            <div class="heat-c"><div class="hb" style="width:88%; background:var(--teal)"></div></div>
+            <div class="heat-c"><div class="hb" style="width:80%; background:var(--teal)"></div></div>
+            <div class="heat-c"><div class="hb" style="width:92%; background:var(--teal)"></div></div>
+
+            <div class="heat-rl"><span>Rohan</span></div>
+            <div class="heat-c"><div class="hb" style="width:82%; background:var(--teal)"></div></div>
+            <div class="heat-c"><div class="hb" style="width:54%; background:#eab308"></div></div>
+            <div class="heat-c"><div class="hb" style="width:38%; background:var(--amber)"></div></div>
+            <div class="heat-c"><div class="hb" style="width:56%; background:#eab308"></div></div>
+            <div class="heat-c"><div class="hb" style="width:78%; background:var(--teal)"></div></div>
+            <div class="heat-c"><div class="hb" style="width:56%; background:#eab308"></div></div>
+          </div>
+          <div class="rule" style="margin:.4rem 0 .7rem;"></div>
+          <div style="font-family:var(--mono); font-size:.72rem; color:var(--muted); letter-spacing:.03em; line-height:1.7;">
+            ⚑ Weakest concept, <b style="color:var(--amber);">common denominators</b>: the whole class is stuck.<br>
+            ⚑ Student to watch, <b style="color:var(--amber);">Kabir</b>: slipping across the board.
           </div>
         </div>
       </div>
@@ -750,14 +1093,14 @@
 
   <!-- ============ 11 · HOW IT FITS ============ -->
   <section class="deck-slide s-paper-2">
-    <div class="stack" style="max-width: 64ch;">
+    <div class="stack" style="max-width: 60ch;">
       <div class="kicker" data-r style="--d:0">How it fits</div>
       <h2 class="display sm" data-r style="--d:1">It slots into the day <span class="accent">you already run.</span></h2>
     </div>
     <div class="checks" data-r style="--d:2; margin-top: clamp(1.8rem,3.5vh,2.8rem);">
       <div class="check">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="11" fill="var(--teal)"/><path d="M7 12.5l3.2 3.2L17 9" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        <p><b>Works with your timetable</b> — a lab period, homework, or a remediation block. No curriculum overhaul.</p>
+        <p><b>Works with your timetable</b>, a lab period, homework, or a remediation block. No curriculum overhaul.</p>
       </div>
       <div class="check">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="11" fill="var(--sky)"/><path d="M7 12.5l3.2 3.2L17 9" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -765,19 +1108,19 @@
       </div>
       <div class="check">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="11" fill="var(--teal)"/><path d="M7 12.5l3.2 3.2L17 9" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        <p><b>Organised by sections</b> — mirrors the classes and divisions you already have.</p>
+        <p><b>Organised by sections</b>, mirrors the classes and divisions you already have.</p>
       </div>
       <div class="check">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="11" fill="var(--sky)"/><path d="M7 12.5l3.2 3.2L17 9" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        <p><b>Admins stay in control</b> — choose exactly which chapters go live, when.</p>
+        <p><b>Admins stay in control</b>, choose exactly which chapters go live, when.</p>
       </div>
       <div class="check">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="11" fill="var(--teal)"/><path d="M7 12.5l3.2 3.2L17 9" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        <p><b>Runs in any browser</b> — no installs, no new hardware, works on the devices you have.</p>
+        <p><b>Runs in any browser</b>, no installs, no new hardware, works on the devices you have.</p>
       </div>
       <div class="check">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="11" fill="var(--sky)"/><path d="M7 12.5l3.2 3.2L17 9" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        <p><b>Insights flow back to teachers</b> — progress and gaps, ready for parent-teacher meetings.</p>
+        <p><b>Insights flow back to teachers</b>, progress and gaps, ready for parent-teacher meetings.</p>
       </div>
     </div>
   </section>
@@ -790,20 +1133,20 @@
     </div>
     <div class="timeline" data-r style="--d:2; max-width: 1180px;">
       <div class="tnode">
-        <div class="tdot">W1</div>
-        <div class="twk">Week 1</div>
+        <div class="tdot">1</div>
+        <div class="twk">Step 1</div>
         <div class="tt">Onboard a section</div>
         <div class="tb">Pick one class. We bulk-enrol students via CSV and set live chapters with you.</div>
       </div>
       <div class="tnode">
-        <div class="tdot">W2</div>
-        <div class="twk">Week 2</div>
+        <div class="tdot">2</div>
+        <div class="twk">Step 2</div>
         <div class="tt">Baseline diagnostic</div>
         <div class="tb">Students take an adaptive assessment. You see each child's gaps, mapped to the graph.</div>
       </div>
       <div class="tnode">
-        <div class="tdot">W3</div>
-        <div class="twk">Weeks 3–4</div>
+        <div class="tdot">3</div>
+        <div class="twk">Step 3</div>
         <div class="tt">Personalised lessons</div>
         <div class="tb">Cinematic lessons + checkpoints close the gaps, student by student.</div>
       </div>
@@ -815,7 +1158,7 @@
       </div>
     </div>
     <p class="lead" data-r style="--d:3; margin-top: clamp(1.6rem,3vh,2.4rem);">
-      No long contract to find out if it works — <span class="ink-accent">just one class, one term.</span>
+      No long contract to find out if it works, <span class="ink-accent">just one class, one month.</span>
     </p>
   </section>
 
@@ -825,7 +1168,7 @@
       <div class="kicker" data-r style="--d:0">What success looks like</div>
       <h2 class="display sm" data-r style="--d:1">Every student at their edge. <span class="accent">Every teacher with x-ray vision.</span></h2>
     </div>
-    <div class="cards three" data-r style="--d:2; margin-top: clamp(2rem,4vh,3rem); max-width: 1100px;">
+    <div class="cards three" data-r style="--d:2; margin-top: clamp(2rem,4vh,3rem); max-width: 1180px;">
       <div class="card">
         <span class="cn">STUDENTS</span>
         <div class="ct">Gaps closed, not hidden</div>
@@ -839,14 +1182,14 @@
       <div class="card">
         <span class="cn">SCHOOL</span>
         <div class="ct">A measurable edge</div>
-        <div class="cb">Curriculum-aligned, data-backed personalised learning — across grades and sections.</div>
+        <div class="cb">Curriculum-aligned, data-backed personalised learning, across grades and sections.</div>
       </div>
     </div>
   </section>
 
   <!-- ============ 14 · CLOSING ============ -->
   <section class="deck-slide s-ink">
-    <svg class="motif side-visual" style="bottom:-6%; left:-4%; width:38%; color:rgba(246,237,226,.45);" viewBox="0 0 420 420" fill="none" aria-hidden="true">
+    <svg class="motif side-visual" style="top:50%; right:7%; transform:translateY(-50%); width:36%; color:rgba(246,237,226,.4);" viewBox="0 0 420 420" fill="none" aria-hidden="true">
       <line class="edge" x1="80" y1="340" x2="180" y2="240"/>
       <line class="edge" x1="180" y1="240" x2="300" y2="290"/>
       <line class="edge" x1="180" y1="240" x2="220" y2="110"/>
@@ -861,7 +1204,7 @@
       <div class="kicker" data-r style="--d:0">Let's begin</div>
       <h2 class="display" data-r style="--d:1">Let's give every student <span class="accent">their own pace.</span></h2>
       <p class="lead" data-r style="--d:2; color: rgba(246,237,226,.78);">
-        Start a pilot with a single class this term. We'll handle setup — you'll see the gaps close.
+        Start a pilot with a single class this term. We'll handle setup, you'll see the gaps close.
       </p>
       <div class="rule" data-r style="--d:3; margin-top:1.6rem; max-width:56ch;"></div>
       <div class="foot" data-r style="--d:4; margin-top:1.4rem; font-size:.84rem;">
@@ -902,7 +1245,7 @@
   document.getElementById('cover-kicker').textContent = "A proposal for " + SCHOOL_NAME;
   document.getElementById('cover-presenter').textContent = PRESENTER;
   document.getElementById('cover-date').textContent = DECK_DATE;
-  document.title = "WizzBox.AI — A Proposal for " + SCHOOL_NAME;
+  document.title = "WizzBox.AI: A Proposal for " + SCHOOL_NAME;
 
   const slides = Array.from(document.querySelectorAll('.deck-slide'));
   const total  = slides.length;
@@ -942,6 +1285,7 @@
   function go(i) {
     current = Math.max(0, Math.min(total - 1, i));
     render();
+    if (slides[current]) slides[current].scrollTop = 0; // start each slide at the top
     if (history.replaceState) history.replaceState(null, '', '#' + (current + 1));
   }
   const next = () => go(current + 1);
@@ -959,12 +1303,16 @@
     else if (e.key === 'f' || e.key === 'F') { toggleFullscreen(); }
   });
 
-  // touch swipe
-  let tx = 0;
-  window.addEventListener('touchstart', (e) => { tx = e.changedTouches[0].clientX; }, { passive: true });
+  // touch swipe, only horizontal gestures flip slides, so vertical
+  // scrolling through tall slides on mobile works normally.
+  let tx = 0, ty = 0;
+  window.addEventListener('touchstart', (e) => {
+    tx = e.changedTouches[0].clientX; ty = e.changedTouches[0].clientY;
+  }, { passive: true });
   window.addEventListener('touchend', (e) => {
     const dx = e.changedTouches[0].clientX - tx;
-    if (Math.abs(dx) > 50) { dx < 0 ? next() : prev(); hideHint(); }
+    const dy = e.changedTouches[0].clientY - ty;
+    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.4) { dx < 0 ? next() : prev(); hideHint(); }
   }, { passive: true });
 
   function toggleFullscreen() {
@@ -975,10 +1323,83 @@
   let hintTimer = setTimeout(hideHint, 6000);
   function hideHint() { hint.classList.add('gone'); clearTimeout(hintTimer); }
 
-  // init — honour a #N deep link (e.g. index.html#6)
+  // init, honour a #N deep link (e.g. index.html#6)
   const fromHash = parseInt((location.hash || '').replace('#', ''), 10);
   if (!isNaN(fromHash) && fromHash >= 1 && fromHash <= total) current = fromHash - 1;
   render();
+
+  /* ------------------------------------------------------------------
+     Center-or-scroll, automatically, for EVERY slide:
+     a slide stays vertically centered while its content fits, and flips
+     to top-aligned + scrollable the moment its content is taller than the
+     viewport. Driven purely by measuring content height, so any slide you
+     add or edit later gets the behaviour with no extra markup or CSS.
+     ------------------------------------------------------------------ */
+  function fitSlides() {
+    // each slide is position:absolute inset:0, so even inactive ones have a
+    // valid clientHeight (= viewport) and scrollHeight (= content) to compare.
+    // Decorative motifs bleed off the edges and would inflate scrollHeight, so
+    // hide them just for the measurement, then restore.
+    const motifs = Array.from(document.querySelectorAll('.deck-slide .motif'));
+    motifs.forEach((m) => { m.dataset.disp = m.style.display; m.style.display = 'none'; });
+    slides.forEach((s) => {
+      s.classList.toggle('overflowing', s.scrollHeight - s.clientHeight > 1);
+    });
+    motifs.forEach((m) => { m.style.display = m.dataset.disp || ''; });
+  }
+  fitSlides();
+  window.addEventListener('resize', fitSlides);
+  window.addEventListener('orientationchange', fitSlides);
+  window.addEventListener('load', fitSlides);            // images settled
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitSlides); // webfonts settled
+
+  /* ------------------------------------------------------------------
+     Graph traversal, the orchestrator walks the chapter's concept graph
+     node by node (bottom-up). A fluent student is cleared almost instantly;
+     a struggling one is taught node after node. Loops between the two.
+     ------------------------------------------------------------------ */
+  (function () {
+    const g = document.getElementById('journeyGraph');
+    if (!g) return;
+    const who = document.getElementById('journeyWho');
+    const order = ['add', 'equiv', 'compare', 'lowest', 'unit', 'equal', 'frac']; // bottom-up
+    const nodeOf = (id) => g.querySelector('.jn[data-n="' + id + '"]');
+    const clearAll = () => g.querySelectorAll('.jn').forEach((n) => n.classList.remove('cleared', 'taught'));
+
+    const setWho = (name, desc, color) => {
+      if (!who) return;
+      who.innerHTML = '<span style="color:' + color + ';">' + name + '</span>'
+        + '<span style="font-family:var(--mono); font-weight:500; font-size:.6rem; letter-spacing:.07em; text-transform:uppercase; color:var(--muted); margin-left:.6rem; vertical-align:middle;">' + desc + '</span>';
+    };
+
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setWho('Every student', 'their own path', 'var(--ink)');
+      order.forEach((id) => { const n = nodeOf(id); if (n) n.classList.add('cleared'); });
+      return;
+    }
+
+    const runs = [
+      { name: 'Aarav', desc: 'already fluent', color: 'var(--teal)', gaps: [] },
+      { name: 'Meera', desc: 'starting from scratch', color: 'var(--amber)', gaps: ['add', 'equiv', 'compare', 'unit', 'equal'] },
+    ];
+    let ri = 0, timers = [];
+    function play() {
+      timers.forEach(clearTimeout); timers = [];
+      const run = runs[ri % runs.length];
+      setWho(run.name, run.desc, run.color);
+      clearAll();
+      let t = 450;
+      order.forEach((id) => {
+        const gap = run.gaps.indexOf(id) !== -1;
+        const step = gap ? 820 : 300;
+        timers.push(setTimeout(() => { const n = nodeOf(id); if (n) n.classList.add(gap ? 'taught' : 'cleared'); }, t));
+        t += step;
+      });
+      ri++;
+      timers.push(setTimeout(play, t + 1300));
+    }
+    play();
+  })();
 </script>
 </body>
 </html>
