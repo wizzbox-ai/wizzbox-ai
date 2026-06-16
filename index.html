@@ -203,10 +203,9 @@
       .deck-card:nth-child(3) { transform: translate(-22px,-4px) rotate(-2.8deg) scale(.955); z-index:20; }
       .deck-card:nth-child(4) { transform: translate(8px,16px) rotate(1.6deg) scale(.945); z-index:10; }
 
-      .dc-eyebrow { font-family: var(--mono); font-size: .6rem; letter-spacing: .16em; text-transform: uppercase; color: var(--teal); display: flex; align-items: center; gap: .5rem; }
-      .dc-eyebrow::before { content: ""; width: 18px; height: 1px; background: currentColor; opacity: .55; }
-      .dc-title { font-family: var(--serif); font-weight: 500; font-size: clamp(1.4rem, 2.4vw, 1.8rem); letter-spacing: -.014em; line-height: 1.07; margin: .55rem 0 0; color: var(--ink); }
-      .dc-title .ac { font-style: italic; color: var(--sky-deep); }
+      .dc-title { font-family: var(--serif); font-weight: 500; font-size: clamp(1.7rem, 3vw, 2.35rem); letter-spacing: -.02em; line-height: 1.02; margin: 0; color: var(--ink); }
+      .dc-sub { font-family: var(--serif); font-weight: 500; font-size: clamp(1.02rem, 1.55vw, 1.22rem); letter-spacing: -.012em; line-height: 1.12; margin: .5rem 0 0; color: var(--muted); }
+      .dc-title .ac, .dc-sub .ac { font-style: italic; color: var(--sky-deep); }
       .dv { flex: 1; min-height: 0; display: flex; flex-direction: column; justify-content: center; margin: clamp(1rem,2vh,1.45rem) 0; }
       .deck-steps { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: .55rem; }
       .deck-steps li { display: flex; gap: .6rem; align-items: flex-start; color: var(--muted); font-size: clamp(.88rem,1.05vw,.97rem); line-height: 1.42; }
@@ -472,8 +471,8 @@
 
               <!-- CARD 1 · STUDENTS -->
               <article class="deck-card" data-view="students">
-                <div class="dc-eyebrow">For students</div>
-                <h3 class="dc-title">A tutor that never <span class="ac">moves on without you.</span></h3>
+                <h3 class="dc-title">For students</h3>
+                <p class="dc-sub">A tutor that never <span class="ac">moves on without you.</span></p>
                 <div class="dv">
                   <div class="screen reel-screen" data-reel data-interval="4000">
                     <div class="screen-head">
@@ -592,8 +591,8 @@
 
               <!-- CARD 2 · TEACHERS -->
               <article class="deck-card" data-view="teachers" aria-hidden="true">
-                <div class="dc-eyebrow">For teachers</div>
-                <h3 class="dc-title">X-ray vision <span class="ac">over your whole class.</span></h3>
+                <h3 class="dc-title">For teachers</h3>
+                <p class="dc-sub">X-ray vision <span class="ac">over your whole class.</span></p>
                 <div class="dv">
                   <div class="screen reel-screen" data-reel data-interval="5200">
                     <div class="screen-head">
@@ -685,8 +684,8 @@
 
               <!-- CARD 3 · SCHOOLS -->
               <article class="deck-card" data-view="schools" aria-hidden="true">
-                <div class="dc-eyebrow">For schools</div>
-                <h3 class="dc-title">Visibility across <span class="ac">every grade.</span></h3>
+                <h3 class="dc-title">For schools</h3>
+                <p class="dc-sub">Visibility across <span class="ac">every grade.</span></p>
                 <div class="dv">
                   <div class="screen reel-screen" data-reel data-interval="5200">
                     <div class="screen-head">
@@ -764,8 +763,8 @@
 
               <!-- CARD 4 · PARENTS -->
               <article class="deck-card" data-view="parents" aria-hidden="true">
-                <div class="dc-eyebrow">For parents</div>
-                <h3 class="dc-title">Real progress, <span class="ac">not just grades.</span></h3>
+                <h3 class="dc-title">For parents</h3>
+                <p class="dc-sub">Real progress, <span class="ac">not just grades.</span></p>
                 <div class="dv">
                   <div class="screen reel-screen" data-reel data-interval="5200">
                     <div class="screen-head">
