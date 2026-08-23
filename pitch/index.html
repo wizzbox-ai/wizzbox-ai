@@ -738,7 +738,7 @@
         <h2 class="display sm" data-r style="--d:1">Assessments that find the <span class="accent">real</span> gap.</h2>
         <ul class="feat" data-r style="--d:2">
           <li><strong>A diagnosis, not a grade</strong>, each question shows <span class="em">why</span>, not just a <span class="em">number</span>.</li>
-          <li><strong>Wrong answers open a conversation</strong>, encouraging on the surface, diagnostic underneath.</li>
+          <li><strong>Wrong answers shape the lesson</strong>, what a student misses decides what's taught next.</li>
           <li><strong>Slip or real gap?</strong> It tells them apart, and names the exact concept.</li>
           <li><strong>Sharp and fast</strong>, a few questions, minutes to the gap.</li>
         </ul>
@@ -746,44 +746,22 @@
       <div class="side-visual" data-r style="--d:3;">
         <div class="mock">
           <div class="mock-head">
-            <span class="mock-title">Adaptive quiz · live</span>
+            <span class="mock-title">Diagnostic · complete</span>
             <div class="dots3"><i></i><i></i><i></i></div>
           </div>
-          <div style="font-family:var(--serif); font-size:1.12rem; font-weight:500; margin-bottom:.55rem; line-height:1.3;">
-            Simplify: 3/4 + 1/6
+          <!-- score summary: the student answers a set, no back-and-forth chat -->
+          <div style="display:flex; align-items:baseline; justify-content:space-between; margin-bottom:.7rem;">
+            <div style="font-family:var(--serif); font-size:1.5rem; font-weight:600; line-height:1;">7<span style="opacity:.4; font-size:1rem; font-weight:500;"> / 10 correct</span></div>
+            <span style="font-family:var(--mono); font-size:.66rem; letter-spacing:.1em; text-transform:uppercase; color:var(--muted);">Fractions · 10 questions</span>
           </div>
-          <div class="bar-row"><span class="bar-name" style="width:auto; flex:1; opacity:.5;">A · 11/12</span><span class="bar-val" style="color:var(--teal); opacity:.55;">✓</span></div>
-          <div class="bar-row" style="background:rgba(201,119,47,.12); border-radius:9px; padding:.2rem .5rem; margin:.3rem -.5rem;"><span class="bar-name" style="width:auto; flex:1; color:var(--ink); font-weight:600;">B · 4/10</span><span class="bar-val" style="color:var(--amber); font-weight:700;">✗</span></div>
-          <div class="bar-row"><span class="bar-name" style="width:auto; flex:1; opacity:.5;">C · 4/24</span></div>
 
-          <div class="rule" style="margin:.6rem 0 .55rem;"></div>
-
-          <!-- STUDENT-FACING: each follow-up is directed by the previous answer; encouraging on top, diagnostic underneath, never corrective -->
-          <div style="display:flex; flex-direction:column; gap:.3rem;">
-            <div style="display:flex; align-items:flex-end; gap:.45rem;">
-              <span style="font-family:var(--mono); font-size:.62rem; letter-spacing:.1em; text-transform:uppercase; color:var(--teal); flex:none; padding-bottom:.34rem;">Tutor</span>
-              <div style="background:rgba(31,148,136,.12); color:var(--ink); font-size:.92rem; line-height:1.34; padding:.42rem .68rem; border-radius:13px 13px 13px 3px; max-width:70%;">How did you get to 4/10? Walk me through it.</div>
-            </div>
-            <div style="display:flex; align-items:flex-end; gap:.45rem; flex-direction:row-reverse;">
-              <span style="font-family:var(--mono); font-size:.62rem; letter-spacing:.1em; text-transform:uppercase; color:var(--sky-deep); flex:none; padding-bottom:.34rem;">You</span>
-              <div style="background:var(--paper); border:1px solid var(--line); color:var(--ink); font-size:.92rem; line-height:1.34; padding:.42rem .68rem; border-radius:13px 13px 3px 13px; max-width:70%;">i added 3 + 1 on top and 4 + 6 below</div>
-            </div>
-            <div style="display:flex; align-items:flex-end; gap:.45rem;">
-              <span style="font-family:var(--mono); font-size:.62rem; letter-spacing:.1em; text-transform:uppercase; color:var(--teal); flex:none; padding-bottom:.34rem;">Tutor</span>
-              <div style="background:rgba(31,148,136,.12); color:var(--ink); font-size:.92rem; line-height:1.34; padding:.42rem .68rem; border-radius:13px 13px 13px 3px; max-width:70%;">Quick check, what's 1/2 + 1/2?</div>
-            </div>
-            <div style="display:flex; align-items:flex-end; gap:.45rem; flex-direction:row-reverse;">
-              <span style="font-family:var(--mono); font-size:.62rem; letter-spacing:.1em; text-transform:uppercase; color:var(--sky-deep); flex:none; padding-bottom:.34rem;">You</span>
-              <div style="background:var(--paper); border:1px solid var(--line); color:var(--ink); font-size:.92rem; line-height:1.34; padding:.42rem .68rem; border-radius:13px 13px 3px 13px; max-width:70%;">2/4</div>
-            </div>
-            <div style="display:flex; align-items:flex-end; gap:.45rem;">
-              <span style="font-family:var(--mono); font-size:.62rem; letter-spacing:.1em; text-transform:uppercase; color:var(--teal); flex:none; padding-bottom:.34rem;">Tutor</span>
-              <div style="background:rgba(31,148,136,.12); color:var(--ink); font-size:.92rem; line-height:1.34; padding:.42rem .68rem; border-radius:13px 13px 13px 3px; max-width:70%;">Two half-glasses of water poured into one glass, how full is it?</div>
-            </div>
-            <div style="display:flex; align-items:flex-end; gap:.45rem; flex-direction:row-reverse;">
-              <span style="font-family:var(--mono); font-size:.62rem; letter-spacing:.1em; text-transform:uppercase; color:var(--sky-deep); flex:none; padding-bottom:.34rem;">You</span>
-              <div style="background:var(--paper); border:1px solid var(--line); color:var(--ink); font-size:.92rem; line-height:1.34; padding:.42rem .68rem; border-radius:13px 13px 3px 13px; max-width:70%;">oh a full glass so 1 not 2/4 the bottoms should not add</div>
-            </div>
+          <!-- per-question results: the misses cluster into one concept -->
+          <div style="display:flex; flex-direction:column; gap:.34rem;">
+            <div class="bar-row" style="margin:0;"><span class="bar-name" style="width:auto; flex:1; opacity:.55;">Reduce 6/8 to lowest terms</span><span class="bar-val" style="color:var(--teal);">✓</span></div>
+            <div class="bar-row" style="margin:0;"><span class="bar-name" style="width:auto; flex:1; opacity:.55;">Compare 2/3 and 3/5</span><span class="bar-val" style="color:var(--teal);">✓</span></div>
+            <div class="bar-row" style="background:rgba(201,119,47,.12); border-radius:9px; padding:.3rem .5rem; margin:0 -.5rem;"><span class="bar-name" style="width:auto; flex:1; color:var(--ink); font-weight:600;">3/4 + 1/6 <span style="font-family:var(--mono); font-size:.58rem; color:var(--amber); letter-spacing:.04em;">COMMON DENOM.</span></span><span class="bar-val" style="color:var(--amber); font-weight:700;">✗</span></div>
+            <div class="bar-row" style="background:rgba(201,119,47,.12); border-radius:9px; padding:.3rem .5rem; margin:0 -.5rem;"><span class="bar-name" style="width:auto; flex:1; color:var(--ink); font-weight:600;">5/6 − 1/3 <span style="font-family:var(--mono); font-size:.58rem; color:var(--amber); letter-spacing:.04em;">COMMON DENOM.</span></span><span class="bar-val" style="color:var(--amber); font-weight:700;">✗</span></div>
+            <div class="bar-row" style="background:rgba(201,119,47,.12); border-radius:9px; padding:.3rem .5rem; margin:0 -.5rem;"><span class="bar-name" style="width:auto; flex:1; color:var(--ink); font-weight:600;">Write 1/4 as ?/12 <span style="font-family:var(--mono); font-size:.58rem; color:var(--amber); letter-spacing:.04em;">EQUIVALENT</span></span><span class="bar-val" style="color:var(--amber); font-weight:700;">✗</span></div>
           </div>
 
           <!-- BEHIND THE SCENES: the silent diagnosis the student never sees -->
@@ -791,8 +769,9 @@
             <div style="font-family:var(--mono); font-size:.55rem; letter-spacing:.13em; text-transform:uppercase; color:var(--teal-br); margin-bottom:.4rem;">
               Behind the scenes · not shown to student
             </div>
-            <div style="font-family:var(--mono); font-size:.7rem; color:var(--amber); letter-spacing:.03em;">
-              ⚑ Gap identified: common denominator (LCM) <span style="color:rgba(246,237,226,.5);">· fractions.lcm</span>
+            <div style="font-family:var(--mono); font-size:.7rem; color:var(--amber); letter-spacing:.03em; line-height:1.7;">
+              ⚑ Gaps identified: common denominator (LCM), equivalent fractions<br>
+              <span style="color:var(--teal-br);">→ next lesson customized to these gaps</span>
             </div>
           </div>
         </div>
@@ -890,7 +869,7 @@
         <ul class="feat" data-r style="--d:2">
           <li><strong>Narrated &amp; animated</strong>, slide-based lessons with natural, human-quality voice.</li>
           <li><strong>Built around the gap</strong>, generated for the student's specific missing concept.</li>
-          <li><strong>Embedded check-questions</strong> that pause the narration and resume when answered.</li>
+          <li><strong>Teaches the approach, not just the answer</strong>, the concept behind each worked solution.</li>
           <li>Auto-generated <span class="em">visuals, diagrams, flashcards &amp; glossary.</span></li>
         </ul>
       </div>
@@ -989,18 +968,15 @@
       <h2 class="display sm" data-r style="--d:1">Aligned to <span class="accent">CBSE.</span> Ready on day one.</h2>
     </div>
     <div class="stats" data-r style="--d:2; margin-top: clamp(2rem,4.5vh,3.4rem); max-width: 1180px;">
-      <div class="stat"><div class="sn">29,426+</div><div class="sl">curriculum-aligned assets, questions, graphs &amp; visuals</div></div>
-      <div class="stat"><div class="sn">6–12</div><div class="sl">grades covered, end to end</div></div>
-      <div class="stat"><div class="sn">6</div><div class="sl">subjects, across mathematics &amp; sciences</div></div>
-      <div class="stat"><div class="sn">100%</div><div class="sl">chapter-level control, per class</div></div>
+      <div class="stat"><div class="sn">190,000+</div><div class="sl">curriculum-aligned questions, graphs &amp; visuals</div></div>
+      <div class="stat"><div class="sn">4,300+</div><div class="sl">concept nodes mapped, prerequisite by prerequisite</div></div>
+      <div class="stat"><div class="sn">200–300</div><div class="sl">questions each student attempts, per chapter</div></div>
+      <div class="stat"><div class="sn" style="font-style:italic;">Infinite</div><div class="sl">custom unit-end &amp; midterm exams, at scale</div></div>
     </div>
     <div class="pills" data-r style="--d:3; margin-top: clamp(1.8rem,3.5vh,2.6rem);">
       <span class="pill">Mathematics</span>
       <span class="pill">Science</span>
-      <span class="pill">Physics</span>
-      <span class="pill">Chemistry</span>
-      <span class="pill">Biology</span>
-      <span class="pill">Biotechnology</span>
+      <span class="pill">Grades 6–12</span>
     </div>
   </section>
 
