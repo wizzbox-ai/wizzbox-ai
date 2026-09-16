@@ -414,6 +414,20 @@
   .nav-count { min-width: 3.4rem; text-align:center; letter-spacing:.1em; color: var(--ink); }
   .nav-count b { color: var(--navy); }
 
+  /* Fullscreen toggle, top-right. Mirrors the nav pill so it reads as one control set. */
+  .fs-btn {
+    position: fixed; top: 1.4rem; right: 1.6rem; z-index: 50;
+    display: grid; place-items: center; width: 2.5rem; height: 2.5rem;
+    border-radius: 50%; cursor: pointer;
+    background: rgba(251,246,239,.7); backdrop-filter: blur(8px);
+    border: 1px solid var(--line); color: var(--navy);
+    transition: transform .2s ease, background .2s ease;
+  }
+  .fs-btn:hover { transform: translateY(-1px); background: var(--paper); }
+  .fs-btn .icon-exit { display: none; }
+  .fs-btn.is-full .icon-enter { display: none; }
+  .fs-btn.is-full .icon-exit { display: block; }
+
   .deck-dots { position: fixed; bottom: 1.7rem; left: 1.6rem; z-index:50; display:flex; gap:.45rem; align-items:center; }
   .deck-dots button { width:.5rem; height:.5rem; border-radius:50%; border:none; cursor:pointer;
                       background: var(--line); padding:0; transition: all .25s ease; }
@@ -472,7 +486,7 @@
       justify-content: center !important; overflow: hidden !important;
     }
     [data-r] { opacity:1 !important; transform:none !important; }
-    .deck-progress, .deck-nav, .deck-dots, .hint { display:none !important; }
+    .deck-progress, .deck-nav, .deck-dots, .hint, .fs-btn { display:none !important; }
     .deck-slide::after { opacity:.025; }
   }
 </style>
@@ -517,8 +531,6 @@
         <span id="cover-presenter" class="em">WizzBox.AI</span>
         <span style="opacity:.4">/</span>
         <span>dev@wizzbox.ai</span>
-        <span style="opacity:.4">/</span>
-        <span id="cover-date">2026</span>
       </div>
     </div>
   </section>
@@ -1200,6 +1212,10 @@
 <!-- ---------- Chrome ---------- -->
 <div class="deck-dots" id="dots"></div>
 <div class="hint" id="hint">Use <kbd>←</kbd> <kbd>→</kbd> to navigate · <kbd>F</kbd> fullscreen</div>
+<button class="fs-btn" id="fsBtn" aria-label="Toggle fullscreen" title="Fullscreen (F)">
+  <svg class="icon-enter" width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M9 3H3v6M15 3h6v6M9 21H3v-6M15 21h6v-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  <svg class="icon-exit" width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M3 9h6V3M21 9h-6V3M3 15h6v6M21 15h-6v6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+</button>
 <div class="deck-nav">
   <button class="nav-btn" id="prev" aria-label="Previous slide">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -1212,17 +1228,15 @@
 
 <script>
   /* ============================================================
-     EDIT THESE THREE LINES to personalise the deck per school:
+     EDIT THESE TWO LINES to personalise the deck per school:
      ============================================================ */
   const SCHOOL_NAME = "Your School";          // e.g. "Springdale Public School"
   const PRESENTER   = "The WizzBox.AI Team";  // your name / team
-  const DECK_DATE   = "June 2026";            // presentation date
   /* ============================================================ */
 
   // Inject config
   document.getElementById('cover-kicker').textContent = "A proposal for " + SCHOOL_NAME;
   document.getElementById('cover-presenter').textContent = PRESENTER;
-  document.getElementById('cover-date').textContent = DECK_DATE;
   document.title = "WizzBox.AI: A Proposal for " + SCHOOL_NAME;
 
   const slides = Array.from(document.querySelectorAll('.deck-slide'));
@@ -1297,6 +1311,12 @@
     if (!document.fullscreenElement) document.documentElement.requestFullscreen?.();
     else document.exitFullscreen?.();
   }
+
+  const fsBtn = document.getElementById('fsBtn');
+  fsBtn.addEventListener('click', () => { toggleFullscreen(); hideHint(); });
+  document.addEventListener('fullscreenchange', () => {
+    fsBtn.classList.toggle('is-full', !!document.fullscreenElement);
+  });
 
   let hintTimer = setTimeout(hideHint, 6000);
   function hideHint() { hint.classList.add('gone'); clearTimeout(hintTimer); }
