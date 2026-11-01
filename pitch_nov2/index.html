@@ -1,0 +1,1608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>WizzBox.AI: A Proposal for Meridian School</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Fraunces:opsz,wght@9..144,340;9..144,420;9..144,500;9..144,600&family=Hanken+Grotesk:wght@400;500;600;700&family=Spline+Sans+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  /* ============================================================
+     WizzBox.AI: School Pitch Deck
+     Editorial / premium. Brand palette: warm cream + navy ink,
+     sky + teal accents. Self-contained, keyboard-navigable,
+     print-to-PDF friendly (Cmd/Ctrl+P → Save as PDF).
+     Edit SCHOOL_NAME / PRESENTER in the <script> at the bottom.
+     ============================================================ */
+
+  :root {
+    --paper:    #f6ede2;
+    --paper-2:  #fbf6ef;
+    --ink:      #16171b;
+    --navy:     #0f172a;
+    --navy-2:   #0b1120;
+    --muted:    #5d5a54;
+    --line:     #e3d8c8;
+    --sky:      #0ea5e9;
+    --sky-deep: #0284c7;
+    --teal:     #1f9488;
+    --teal-br:  #3db5a7;
+    --amber:    #c9772f;
+
+    --serif: "Fraunces", Georgia, "Times New Roman", serif;
+    --sans:  "Hanken Grotesk", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --mono:  "Spline Sans Mono", ui-monospace, "SF Mono", Menlo, monospace;
+    --hand:  "Caveat", "Bradley Hand", "Comic Sans MS", cursive;
+
+    --pad: clamp(2rem, 5.2vw, 6.5rem);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body { height: 100%; }
+
+  body {
+    font-family: var(--sans);
+    background: var(--navy-2);
+    color: var(--ink);
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  /* ---------- Deck shell ---------- */
+  .deck {
+    position: fixed;
+    inset: 0;
+  }
+
+  .deck-slide {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    /* `safe center` keeps content centered when it fits, but falls back to
+       top-aligned when it's taller than the viewport so it can be scrolled. */
+    justify-content: safe center;
+    padding: var(--pad);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(46px) scale(.992);
+    transition: opacity .55s ease, transform .75s cubic-bezier(.22,.61,.18,1), visibility 0s linear .75s;
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .deck-slide.active   { opacity: 1; visibility: visible; transform: none; transition: opacity .55s ease, transform .75s cubic-bezier(.22,.61,.18,1), visibility 0s; }
+  .deck-slide.is-past  { transform: translateX(-46px) scale(.992); }
+  .deck-slide.is-future{ transform: translateX(46px) scale(.992); }
+  /* Centered by default. JS (fitSlides) adds `.overflowing` only when a slide's
+     content is taller than the viewport, flipping it to top-aligned so it
+     scrolls from the top instead of clipping. Automatic for every slide
+     nothing to wire up per page. `safe center` above is the no-JS fallback. */
+  .deck-slide.overflowing { justify-content: flex-start; }
+
+  /* paper vs ink themes */
+  .s-paper {
+    background:
+      radial-gradient(120% 90% at 88% -10%, rgba(14,165,233,.10), transparent 55%),
+      radial-gradient(90% 80% at -8% 110%, rgba(31,148,136,.10), transparent 55%),
+      var(--paper);
+    color: var(--ink);
+  }
+  .s-paper-2 { background: var(--paper-2); color: var(--ink); }
+  .s-ink {
+    background:
+      radial-gradient(110% 80% at 85% 0%, rgba(14,165,233,.22), transparent 55%),
+      radial-gradient(90% 70% at 0% 100%, rgba(61,181,167,.18), transparent 50%),
+      var(--navy);
+    color: var(--paper);
+  }
+  .s-ink .muted { color: rgba(246,237,226,.66); }
+  .s-ink .kicker { color: var(--teal-br); }
+  .s-ink .rule { background: rgba(246,237,226,.18); }
+
+  /* grain overlay */
+  .deck-slide::after {
+    content: "";
+    position: absolute; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E");
+    opacity: .035;
+    pointer-events: none;
+    mix-blend-mode: multiply;
+  }
+  .s-ink.deck-slide::after { mix-blend-mode: overlay; opacity: .06; }
+
+  /* ---------- Reveal stagger ---------- */
+  [data-r] {
+    opacity: 0;
+    transform: translateY(22px);
+    transition: opacity .7s ease, transform .85s cubic-bezier(.22,.61,.18,1);
+    transition-delay: calc(var(--d, 0) * 85ms);
+  }
+  .deck-slide.active [data-r] { opacity: 1; transform: none; }
+
+  /* ---------- Typography ---------- */
+  .kicker {
+    font-family: var(--mono);
+    font-size: clamp(.66rem, .9vw, .8rem);
+    font-weight: 500;
+    letter-spacing: .26em;
+    text-transform: uppercase;
+    color: var(--teal);
+    display: flex;
+    align-items: center;
+    gap: .85rem;
+  }
+  .kicker::before {
+    content: "";
+    width: 26px; height: 1px;
+    background: currentColor;
+    display: inline-block;
+    opacity: .7;
+  }
+
+  .display {
+    font-family: var(--serif);
+    font-weight: 420;
+    line-height: 1.02;
+    letter-spacing: -.018em;
+    font-size: clamp(2.4rem, 6.2vw, 5.4rem);
+    max-width: 18ch;
+  }
+  .display .accent { font-style: italic; color: var(--sky-deep); font-weight: 500; }
+  .s-ink .display .accent { color: var(--sky); }
+  .display.sm { font-size: clamp(2rem, 4.6vw, 3.7rem); max-width: 16ch; }
+
+  .lead {
+    font-size: clamp(1.02rem, 1.55vw, 1.35rem);
+    line-height: 1.5;
+    color: var(--muted);
+    max-width: 46ch;
+    font-weight: 400;
+  }
+
+  .rule { width: 100%; height: 1px; background: var(--line); }
+
+  .em { color: var(--ink); font-weight: 600; }
+  .s-ink .em { color: var(--paper); }
+  .ink-accent { color: var(--teal); font-weight: 600; }
+
+  /* ---------- Layout helpers ---------- */
+  .stack > * + * { margin-top: clamp(1rem, 2vh, 1.6rem); }
+  .row { display: flex; gap: clamp(1rem, 2.4vw, 2.4rem); }
+  .between { justify-content: space-between; align-items: flex-end; }
+  .two-col {
+    display: grid;
+    grid-template-columns: 1.15fr .85fr;
+    gap: clamp(2rem, 5vw, 5rem);
+    align-items: center;
+  }
+  /* let columns shrink to the viewport instead of being forced wide by a
+     child's min-content (e.g. an inline SVG), prevents mobile overflow. */
+  .two-col > * { min-width: 0; }
+  /* a wider second column (e.g. slide 10's heatmap); collapses on mobile below */
+  .two-col.wide-right { grid-template-columns: .9fr 1.1fr; }
+
+  /* cards */
+  .cards { display: grid; gap: clamp(.9rem, 1.6vw, 1.4rem); }
+  .cards.three { grid-template-columns: repeat(3, 1fr); }
+  .cards.four  { grid-template-columns: repeat(4, 1fr); }
+  .card {
+    background: var(--paper-2);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: clamp(1.1rem, 1.7vw, 1.6rem);
+    position: relative;
+  }
+  .s-ink .card { background: rgba(255,255,255,.04); border-color: rgba(246,237,226,.14); }
+  .card .ct {
+    font-family: var(--serif);
+    font-size: clamp(1.05rem, 1.5vw, 1.32rem);
+    font-weight: 500;
+    margin-bottom: .5rem;
+    letter-spacing: -.01em;
+  }
+  .card .cb { font-size: clamp(.86rem, 1.1vw, .98rem); color: var(--muted); line-height: 1.45; }
+  .card .cn {
+    font-family: var(--mono);
+    font-size: .72rem;
+    color: var(--sky-deep);
+    letter-spacing: .12em;
+    margin-bottom: .9rem;
+    display: block;
+  }
+  .s-ink .card .cn { color: var(--sky); }
+
+  /* bullet list */
+  .feat { list-style: none; display: grid; gap: clamp(.7rem, 1.3vh, 1.05rem); max-width: 44ch; }
+  .feat li {
+    position: relative;
+    padding-left: 1.9rem;
+    font-size: clamp(.96rem, 1.25vw, 1.12rem);
+    line-height: 1.42;
+    color: var(--muted);
+  }
+  .feat li .em, .feat li strong { color: var(--ink); font-weight: 600; }
+  .s-ink .feat li .em, .s-ink .feat li strong { color: var(--paper); }
+  .feat li::before {
+    content: "";
+    position: absolute;
+    left: 0; top: .5em;
+    width: 9px; height: 9px;
+    border-radius: 50%;
+    background: var(--teal);
+    box-shadow: 0 0 0 4px rgba(31,148,136,.14);
+  }
+  .feat li:nth-child(even)::before { background: var(--sky); box-shadow: 0 0 0 4px rgba(14,165,233,.14); }
+
+  /* pills */
+  .pills { display: flex; flex-wrap: wrap; gap: .65rem; }
+  .pill {
+    font-family: var(--mono);
+    font-size: .76rem;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    padding: .55rem 1rem;
+    border-radius: 100px;
+    border: 1px solid var(--line);
+    background: var(--paper-2);
+    color: var(--ink);
+  }
+  .s-ink .pill { background: rgba(255,255,255,.05); border-color: rgba(246,237,226,.16); color: var(--paper); }
+  .pill.solid { background: var(--navy); color: var(--paper); border-color: var(--navy); }
+
+  /* big stat numbers */
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: clamp(1rem, 2.5vw, 2.6rem); }
+  .stat .sn {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: clamp(2.1rem, 4.4vw, 3.6rem);
+    line-height: 1;
+    letter-spacing: -.02em;
+    background: linear-gradient(120deg, var(--sky-deep), var(--teal));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .stat .sl { margin-top: .6rem; font-size: clamp(.82rem, 1.05vw, .96rem); color: var(--muted); line-height: 1.35; }
+
+  /* numbered process steps */
+  .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: clamp(.8rem, 1.8vw, 1.8rem); position: relative; }
+  .step .sk {
+    font-family: var(--mono); font-size: .74rem; letter-spacing: .14em; color: var(--sky-deep);
+    display: flex; align-items: center; gap: .6rem; margin-bottom: .9rem;
+  }
+  .step .sk b {
+    font-family: var(--serif); font-weight: 600; font-size: 1.15rem; color: var(--ink);
+    width: 2.1rem; height: 2.1rem; border-radius: 50%; border: 1.5px solid var(--teal);
+    display: grid; place-items: center;
+  }
+  .s-ink .step .sk b { color: var(--paper); border-color: var(--teal-br); }
+  .step .st { font-family: var(--serif); font-size: clamp(1.05rem,1.5vw,1.35rem); font-weight: 500; margin-bottom: .4rem; }
+  .step .sb { font-size: clamp(.84rem,1.05vw,.96rem); color: var(--muted); line-height: 1.45; }
+
+  /* timeline */
+  .timeline { display: grid; grid-template-columns: repeat(4,1fr); gap: clamp(1rem,2vw,2rem); position: relative; margin-top: 1rem; }
+  .timeline::before {
+    content:""; position:absolute; left:2%; right:2%; top: 1.05rem; height:2px;
+    background: linear-gradient(90deg, var(--sky), var(--teal));
+    opacity:.5;
+  }
+  .tnode { position: relative; }
+  .tdot { width: 2.2rem; height: 2.2rem; border-radius: 50%; background: var(--paper); border: 2px solid var(--teal);
+          display: grid; place-items: center; font-family: var(--mono); font-weight: 600; font-size: .8rem; color: var(--teal);
+          position: relative; z-index: 2; margin-bottom: 1rem; }
+  .twk { font-family: var(--mono); font-size: .72rem; letter-spacing: .14em; text-transform: uppercase; color: var(--sky-deep); margin-bottom: .35rem; }
+  .tt { font-family: var(--serif); font-size: clamp(1rem,1.35vw,1.22rem); font-weight: 500; margin-bottom: .35rem; }
+  .tb { font-size: clamp(.82rem,1vw,.93rem); color: var(--muted); line-height: 1.42; }
+
+  /* dashboard mock (teachers slide) */
+  .mock {
+    background: var(--paper-2); border: 1px solid var(--line); border-radius: 16px;
+    padding: clamp(1.2rem,1.8vw,1.7rem); box-shadow: 0 24px 60px -36px rgba(15,23,42,.35);
+  }
+  .mock-head { display:flex; align-items:center; justify-content:space-between; margin-bottom: 1.2rem; }
+  .mock-title { font-family: var(--mono); font-size:.72rem; letter-spacing:.16em; text-transform:uppercase; color: var(--muted); }
+  .dots3 { display:flex; gap:.4rem; }
+  .dots3 i { width:.5rem; height:.5rem; border-radius:50%; background: var(--line); }
+  .bar-row { display:flex; align-items:center; gap:.9rem; margin: .7rem 0; }
+  .bar-name { font-size:.82rem; width: 5.2rem; color: var(--ink); flex: none; }
+  .bar-track { flex:1; height:.62rem; background: var(--line); border-radius:100px; overflow:hidden; }
+  .bar-fill { height:100%; border-radius:100px; background: linear-gradient(90deg, var(--sky), var(--teal)); }
+  .bar-val { font-family: var(--mono); font-size:.74rem; color: var(--muted); width: 2.6rem; text-align:right; flex:none; }
+  .bar-row.weak .bar-fill { background: linear-gradient(90deg, #e0a05a, var(--amber)); }
+  .bar-row.weak .bar-val { color: var(--amber); }
+
+  /* checklist grid (integration) */
+  .checks { display:grid; grid-template-columns: repeat(3,1fr); gap: clamp(1rem,2vw,1.8rem) clamp(1.4rem,2.6vw,2.6rem); max-width: 1180px; }
+  .check { display:flex; gap:.9rem; align-items:flex-start; }
+  .check svg { flex:none; margin-top:.15rem; }
+  .check .em { font-weight:600; color:var(--ink); }
+  .check p { font-size: clamp(.9rem,1.15vw,1.04rem); color: var(--muted); line-height:1.42; }
+  .check p b { color: var(--ink); font-weight:600; }
+
+  /* graph motif */
+  .motif { position:absolute; pointer-events:none; }
+  .motif .edge { stroke: currentColor; stroke-width:1; opacity:.28; }
+  .motif .node { fill: currentColor; }
+  .motif .node.hot { fill: var(--sky); }
+  .motif .node.warm { fill: var(--teal-br); }
+  .pulse { animation: pulse 3.4s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+  @keyframes pulse { 0%,100%{ opacity:.5; } 50%{ opacity:1; } }
+
+  /* slide 7, cinematic-lesson mock: animated narration + lesson viz */
+  @keyframes eqbar { 0%,100% { transform: scaleY(.25); } 50% { transform: scaleY(1); } }
+  .eq { display:flex; justify-content:center; align-items:flex-end; gap:3px; height:30px; }
+  .eq i { display:block; width:3px; height:100%; border-radius:2px; background: var(--teal-br);
+          transform-origin: center bottom; animation: eqbar 1.05s ease-in-out infinite; }
+  .lfrac { display:inline-flex; flex-direction:column; align-items:center; line-height:1; vertical-align:middle; font-family:var(--serif); }
+  .lfrac .d { border-top: 2px solid rgba(246,237,226,.55); margin-top:.14em; padding-top:.05em; }
+  @keyframes denGlow  { 0%,100% { color: rgba(246,237,226,.92); } 50% { color: var(--sky); } }
+  .den-glow  { animation: denGlow 2.4s ease-in-out infinite; }
+  @keyframes sliceGlow { 0%,100% { opacity:.5; } 50% { opacity:1; } }
+  .slice-on { animation: sliceGlow 2.4s ease-in-out infinite; }
+  /* LCM (÷12) grid overlaid on the slice bars, a distinct dashed separator */
+  .lcm-grid { position:absolute; inset:0; display:flex; pointer-events:none; border-radius:3px; overflow:hidden; }
+  .lcm-grid span { flex:1; border-left:1.5px dashed var(--amber); }
+  .lcm-grid span:first-child { border-left:0; }
+  /* graph traversal, the orchestrator walks the concept graph node by node */
+  .jn .dot { fill: rgba(15,23,42,.22); transition: fill .35s ease; }
+  .jn .chk { opacity: 0; transition: opacity .25s ease .08s; }
+  .jn .ring { opacity: 0; }
+  .jn .lbl { fill: var(--muted); transition: fill .35s ease; }
+  .jn.cleared .dot { fill: var(--teal); }
+  .jn.taught  .dot { fill: var(--amber); }            /* taught, persistent */
+  .jn.cleared .chk, .jn.taught .chk { opacity: 1; }
+  .jn.cleared .lbl, .jn.taught .lbl { fill: var(--ink); }
+  @media (prefers-reduced-motion: reduce) {
+    .eq i, .den-glow, .slice-on, .pulse { animation: none; }
+  }
+
+  /* concept-mastery heatmap (slide 10), matrix of horizontal progress bars */
+  .heat { display:grid; gap:6px; position:relative; }
+  /* soft highlight bands behind the weakest column + weakest student row.
+     An absolutely-positioned overlay grid mirrors the same tracks, so it adds
+     no grid cell and displaces nothing; sits at z-index 0, real cells at 1. */
+  .heat-hl { position:absolute; inset:0; display:grid; gap:6px; pointer-events:none; z-index:0; }
+  .heat-hl i { display:block; border-radius:7px; background:rgba(201,119,47,.16); }
+  .heat-h, .heat-rl, .heat-c { z-index:1; }
+  .heat-h { position:relative; }
+  .heat-h span { position:absolute; left:5px; bottom:2px; transform-origin:left bottom; transform:rotate(-45deg);
+                 white-space:nowrap; font-family:var(--mono); font-size:.6rem; font-weight:700; letter-spacing:.02em; color:var(--ink); }
+  .heat-rl { position:relative; }
+  .heat-rl span { position:absolute; right:7px; bottom:20px; transform-origin:right bottom; transform:rotate(-45deg);
+                  white-space:nowrap; font-family:var(--mono); font-size:.6rem; font-weight:700; letter-spacing:.02em; color:var(--ink); }
+  .heat-c { position:relative; border:1px solid rgba(15,23,42,.22); border-radius:4px; background:var(--paper); overflow:hidden; }
+  .heat-c .hb { position:absolute; left:0; top:0; bottom:0; min-width:3px; }
+  .heat-chip { display:inline-block; width:8px; height:8px; border-radius:2px; margin-right:.3rem; vertical-align:middle; }
+
+  .cover-mark { font-family: var(--serif); font-weight:500; letter-spacing:-.02em; }
+  .wordmark { font-family: var(--serif); font-weight:500; letter-spacing:-.03em; line-height:.95;
+              font-size: clamp(3.4rem, 9vw, 7.5rem); }
+  .wordmark .dot { color: var(--sky); }
+
+  .foot { display:flex; align-items:center; gap:1rem; font-family:var(--mono); font-size:.74rem; letter-spacing:.1em; color:var(--muted); }
+  .foot .em { color: var(--ink); }
+  .s-ink .foot { color: rgba(246,237,226,.6); }
+  .s-ink .foot .em { color: var(--paper); }
+
+  .eyebrow-num { font-family: var(--serif); font-size: clamp(2.4rem,4.4vw,3.6rem); font-weight:600; color: var(--line); line-height:1; }
+  .s-ink .eyebrow-num { color: rgba(246,237,226,.18); }
+
+  /* ---------- Chrome: progress, nav, dots ---------- */
+  .deck-progress {
+    position: fixed; top:0; left:0; height:3px; width:0%;
+    background: linear-gradient(90deg, var(--sky), var(--teal));
+    z-index: 50; transition: width .5s cubic-bezier(.22,.61,.18,1);
+  }
+  .deck-nav {
+    position: fixed; bottom: 1.4rem; right: 1.6rem; z-index: 50;
+    display:flex; align-items:center; gap:.6rem;
+    font-family: var(--mono); font-size:.78rem; color: var(--muted);
+    background: rgba(251,246,239,.7); backdrop-filter: blur(8px);
+    border: 1px solid var(--line); border-radius: 100px; padding: .4rem .55rem;
+  }
+  .nav-btn {
+    width: 2rem; height: 2rem; border-radius: 50%; border: none; cursor: pointer;
+    background: var(--navy); color: var(--paper); display:grid; place-items:center;
+    transition: transform .2s ease, background .2s ease;
+  }
+  .nav-btn:hover { transform: translateY(-1px); background: #000; }
+  .nav-btn:disabled { opacity:.3; cursor: default; transform:none; }
+  .nav-count { min-width: 3.4rem; text-align:center; letter-spacing:.1em; color: var(--ink); }
+  .nav-count b { color: var(--navy); }
+
+  /* Fullscreen toggle, top-right. Mirrors the nav pill so it reads as one control set. */
+  .fs-btn {
+    position: fixed; top: 1.4rem; right: 1.6rem; z-index: 50;
+    display: grid; place-items: center; width: 2.5rem; height: 2.5rem;
+    border-radius: 50%; cursor: pointer;
+    background: rgba(251,246,239,.7); backdrop-filter: blur(8px);
+    border: 1px solid var(--line); color: var(--navy);
+    transition: transform .2s ease, background .2s ease;
+  }
+  .fs-btn:hover { transform: translateY(-1px); background: var(--paper); }
+  .fs-btn .icon-exit { display: none; }
+  .fs-btn.is-full .icon-enter { display: none; }
+  .fs-btn.is-full .icon-exit { display: block; }
+
+  .deck-dots { position: fixed; bottom: 1.7rem; left: 1.6rem; z-index:50; display:flex; gap:.45rem; align-items:center; }
+  .deck-dots button { width:.5rem; height:.5rem; border-radius:50%; border:none; cursor:pointer;
+                      background: var(--line); padding:0; transition: all .25s ease; }
+  .deck-dots button.on { width:1.5rem; border-radius:100px; background: var(--navy); }
+
+  .hint { position: fixed; bottom: 1.7rem; left:50%; transform: translateX(-50%); z-index:50;
+          font-family: var(--mono); font-size:.7rem; letter-spacing:.12em; color: var(--muted);
+          opacity:.7; transition: opacity .4s ease; text-transform: uppercase; }
+  .hint.gone { opacity:0; pointer-events:none; }
+  .hint kbd { font-family: var(--mono); background: var(--paper-2); border:1px solid var(--line);
+              border-radius:5px; padding:.05rem .4rem; color: var(--ink); }
+
+  /* ---------- Responsive ---------- */
+  /* Slide 2's "one exam · one number" drawing: sits at the right on desktop,
+     centers under the copy on smaller screens. */
+  .problem-viz { width: 100%; max-width: 360px; justify-self: end; }
+
+  @media (max-width: 860px) {
+    /* Extra top/bottom padding clears the fixed nav / dots / hint chrome.
+       Centering vs. scrolling is handled automatically by fitSlides(). */
+    .deck-slide {
+      padding-top: clamp(3.25rem, 9vh, 4.5rem);
+      padding-bottom: clamp(5rem, 14vh, 7rem);
+    }
+    .two-col, .two-col.wide-right { grid-template-columns: 1fr; gap: clamp(1.6rem, 5vw, 2.2rem); }
+    .cards.three, .cards.four, .stats, .steps, .timeline, .checks { grid-template-columns: repeat(2,1fr); }
+    .timeline::before { display:none; }
+    /* Hide only the purely-decorative background graphs (cover / closing);
+       keep the informative diagrams & mock screens, now stacked & scrollable. */
+    .motif.side-visual { display:none; }
+    .side-visual { justify-self: center; }
+    .problem-viz { justify-self: center; margin: .4rem auto 0; }
+  }
+
+  @media (max-width: 560px) {
+    :root { --pad: clamp(1.25rem, 6vw, 1.75rem); }
+    .cards.three, .cards.four, .stats, .steps, .timeline, .checks { grid-template-columns: 1fr; }
+    .display { font-size: clamp(2rem, 9vw, 2.7rem); }
+    .display.sm { font-size: clamp(1.7rem, 8vw, 2.3rem); }
+    .wordmark { font-size: clamp(3rem, 16vw, 4.6rem); }
+    .lead { font-size: clamp(1rem, 4.2vw, 1.16rem); }
+    .deck-nav { bottom: 1rem; right: 1rem; }
+    .deck-dots { bottom: 1.15rem; left: 1rem; }
+    .hint { display: none; }
+  }
+
+  /* ---------- Print → PDF ---------- */
+  @media print {
+    @page { size: 1280px 720px; margin: 0; }
+    html, body { overflow: visible; height: auto; background:#fff; }
+    .deck { position: static; }
+    .deck-slide {
+      position: relative; inset: auto; width: 1280px; height: 720px;
+      opacity:1 !important; visibility:visible !important; transform:none !important;
+      page-break-after: always; break-after: page;
+      justify-content: center !important; overflow: hidden !important;
+    }
+    [data-r] { opacity:1 !important; transform:none !important; }
+    .deck-progress, .deck-nav, .deck-dots, .hint, .fs-btn { display:none !important; }
+    .deck-slide::after { opacity:.025; }
+  }
+
+  /* ---------- pitch_nov2 additions ---------- */
+  .cards.two  { grid-template-columns: repeat(2, 1fr); }
+  .cards.five { grid-template-columns: repeat(5, 1fr); }
+  .cards.five .card .ct { font-size: clamp(1rem, 1.3vw, 1.18rem); }
+
+  /* comparison table: question banks vs WizzBox */
+  .vs { display:grid; grid-template-columns: .9fr 1.2fr 1.3fr; max-width:1180px; margin-top: clamp(1.6rem,3.5vh,2.6rem); border-top:1px solid rgba(246,237,226,.16); }
+  .vs > div { padding: .9rem 1.1rem; border-bottom:1px solid rgba(246,237,226,.12); font-size: clamp(.88rem,1.12vw,1.02rem); line-height:1.42; color: rgba(246,237,226,.6); }
+  .vs .vh { font-family:var(--mono); font-size:.68rem; letter-spacing:.14em; text-transform:uppercase; color: rgba(246,237,226,.5); }
+  .vs .vk { font-family:var(--mono); font-size:.68rem; letter-spacing:.1em; text-transform:uppercase; color: var(--teal-br); padding-top:1.05rem; }
+  .vs .vw { color: var(--paper); background: rgba(14,165,233,.09); }
+  .vs .vh.vw { color: var(--sky); }
+
+  /* quotes */
+  .quote { font-family: var(--serif); font-size: clamp(1.05rem,1.55vw,1.38rem); line-height:1.34; letter-spacing:-.01em; color: var(--ink); }
+  .quote::before { content: "\201C"; color: var(--sky-deep); margin-right:.08em; }
+  .quote::after  { content: "\201D"; color: var(--sky-deep); margin-left:.04em; }
+  .quote-by { margin-top:.8rem; font-family:var(--mono); font-size:.68rem; letter-spacing:.12em; text-transform:uppercase; color: var(--muted); }
+
+  /* HCF evidence bars */
+  .hq { font-family: var(--serif); font-size: clamp(.98rem,1.3vw,1.14rem); margin: .2rem 0 .5rem; line-height:1.3; }
+  .hq-sub { font-family: var(--mono); font-size:.6rem; letter-spacing:.13em; text-transform:uppercase; color: var(--muted); }
+  .bar-row.hcf { margin:.38rem 0; }
+  .bar-row.hcf .bar-name { font-family: var(--mono); font-size:.76rem; width:3.4rem; }
+  .bar-row.hcf .bar-fill { background: linear-gradient(90deg, #e0a05a, var(--amber)); }
+  .bar-row.hcf.ok .bar-name, .bar-row.hcf.ok .bar-val { color: var(--teal); font-weight:700; }
+  .bar-row.hcf.ok .bar-fill { background: var(--teal); }
+  .bar-row.hcf .bar-val { width: 3.6rem; }
+
+  /* pricing */
+  .price { display:flex; flex-direction:column; }
+  .price .pa { font-family: var(--serif); font-weight:500; font-size: clamp(2rem,3.6vw,3rem); line-height:1; letter-spacing:-.02em; color: var(--ink); margin:.2rem 0 .3rem; }
+  .price .pa small { font-family: var(--sans); font-size: clamp(.8rem,1vw,.92rem); font-weight:500; color: var(--muted); letter-spacing:0; margin-left:.35rem; }
+  .price ul { list-style:none; margin-top:.8rem; display:flex; flex-direction:column; gap:.45rem; }
+  .price li { font-size: clamp(.86rem,1.08vw,.98rem); color: var(--muted); line-height:1.42; padding-left:1.1rem; position:relative; }
+  .price li::before { content:""; position:absolute; left:0; top:.55em; width:.42rem; height:.42rem; border-radius:50%; background: var(--teal); }
+  .price.featured { border-color: var(--sky); box-shadow: 0 18px 50px -34px rgba(2,132,199,.55); }
+  .price-strip { display:grid; grid-template-columns: repeat(3,1fr); gap: clamp(.9rem,1.6vw,1.4rem); max-width:1180px; margin-top: clamp(1rem,2vh,1.4rem); }
+  .price-strip > div { border-top: 2px solid var(--line); padding-top:.7rem; font-size: clamp(.84rem,1.05vw,.96rem); color: var(--muted); line-height:1.4; }
+  .price-strip b { display:block; font-family: var(--mono); font-size:.66rem; letter-spacing:.13em; text-transform:uppercase; color: var(--sky-deep); font-weight:500; margin-bottom:.3rem; }
+  .price-strip strong { color: var(--ink); font-weight:600; }
+  .fine { margin-top: clamp(.9rem,1.8vh,1.3rem); font-size: .8rem; color: var(--muted); max-width: 1180px; }
+
+  .s-ink .stat .sl { color: rgba(246,237,226,.68); }
+
+  @media (max-width: 1100px) { .cards.five { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 860px) {
+    .cards.two, .cards.five, .price-strip { grid-template-columns: 1fr 1fr; }
+    .vs { grid-template-columns: 1fr 1fr; }
+    .vs .vk { grid-column: 1 / -1; border-bottom:0; padding-bottom:0; }
+    .vs .vblank { display:none; }
+  }
+  @media (max-width: 560px) {
+    .cards.two, .cards.five, .price-strip { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="deck-progress" id="progress"></div>
+<main class="deck" id="deck">
+
+  <!-- ============ 1 · COVER ============ -->
+  <section class="deck-slide s-ink">
+    <svg class="motif side-visual" style="top:50%; right:-3%; transform:translateY(-50%); width:46%; height:auto; color:rgba(246,237,226,.5);" viewBox="0 0 520 520" fill="none" aria-hidden="true">
+      <line class="edge" x1="90" y1="120" x2="240" y2="80"/>
+      <line class="edge" x1="240" y1="80" x2="400" y2="150"/>
+      <line class="edge" x1="240" y1="80" x2="260" y2="250"/>
+      <line class="edge" x1="260" y1="250" x2="120" y2="320"/>
+      <line class="edge" x1="260" y1="250" x2="420" y2="320"/>
+      <line class="edge" x1="120" y1="320" x2="200" y2="450"/>
+      <line class="edge" x1="420" y1="320" x2="360" y2="450"/>
+      <line class="edge" x1="260" y1="250" x2="360" y2="450"/>
+      <circle class="node pulse" cx="90"  cy="120" r="7"/>
+      <circle class="node hot pulse" cx="240" cy="80" r="11" style="animation-delay:.6s"/>
+      <circle class="node pulse" cx="400" cy="150" r="7" style="animation-delay:1.1s"/>
+      <circle class="node warm pulse" cx="260" cy="250" r="13" style="animation-delay:.3s"/>
+      <circle class="node pulse" cx="120" cy="320" r="8" style="animation-delay:1.4s"/>
+      <circle class="node pulse" cx="420" cy="320" r="8" style="animation-delay:.9s"/>
+      <circle class="node hot pulse" cx="200" cy="450" r="7" style="animation-delay:1.7s"/>
+      <circle class="node pulse" cx="360" cy="450" r="9" style="animation-delay:.5s"/>
+      <line class="edge" x1="256" y1="20" x2="240" y2="80"/>
+      <circle class="node pulse" cx="256" cy="20" r="14" style="animation-delay:.2s"/>
+    </svg>
+
+    <div class="stack" style="max-width: 60ch;">
+      <div class="kicker" data-r style="--d:0" id="cover-kicker">A proposal for your school</div>
+      <h1 class="display" data-r style="--d:1">A personal tutor for <span class="accent">every student in the class.</span></h1>
+      <p class="lead" data-r style="--d:2; color: rgba(246,237,226,.74);">
+        <span class="em">Others test. WizzBox teaches.</span> When a student gets a question wrong, WizzBox<span style="color:var(--sky)">.AI</span>
+        finds out why, teaches that one idea one-on-one, and proves it landed on fresh questions.
+        Maths, Physics and Chemistry, built to CBSE, ICSE, IB and Cambridge.
+      </p>
+      <div class="rule" data-r style="--d:3; margin-top:1.8rem; max-width:60ch;"></div>
+      <div class="foot" data-r style="--d:4; margin-top:1.4rem;">
+        <span id="cover-presenter" class="em">WizzBox.AI</span>
+        <span style="opacity:.4">/</span>
+        <span>dev@wizzbox.ai</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 2 · THE PROBLEM ============ -->
+  <section class="deck-slide s-paper">
+
+    <div class="two-col" style="align-items:center; max-width:1180px;">
+      <div class="stack">
+        <div class="kicker" data-r style="--d:0">The problem</div>
+        <h2 class="display" data-r style="--d:1">One teacher. Thirty students. <span class="accent">One pace.</span></h2>
+        <p class="lead" data-r style="--d:2">
+          Every student is in a different place, a different gap to close, a different
+          pace to learn at. One speed for the whole class fits none of them.
+        </p>
+      </div>
+
+      <!-- one exam, one score each → the spread it hides -->
+      <div class="side-visual problem-viz" data-r style="--d:3;">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:.7rem;">
+          <span style="font-family:var(--mono); font-size:.68rem; letter-spacing:.16em; text-transform:uppercase; color:var(--muted);">One exam · one number</span>
+          <span style="font-family:var(--mono); font-size:.68rem; letter-spacing:.12em; color:var(--sky-deep);">Class of 30</span>
+        </div>
+        <svg viewBox="0 0 400 270" width="100%" style="display:block;" fill="none" aria-hidden="true">
+          <defs>
+            <linearGradient id="bellFill" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="var(--sky)" stop-opacity=".26"/>
+              <stop offset="1" stop-color="var(--sky)" stop-opacity="0"/>
+            </linearGradient>
+            <clipPath id="barClip"><rect x="40" y="114" width="320" height="18" rx="9"/></clipPath>
+          </defs>
+
+          <!-- gaussian distribution -->
+          <path d="M40,108 C43.33,107.53 53.33,106.58 60,105.2 C66.67,103.82 73.33,102.22 80,99.7 C86.67,97.18 93.33,94.05 100,90.1 C106.67,86.15 113.33,81.27 120,76 C126.67,70.73 133.33,64.4 140,58.5 C146.67,52.6 153.33,45.83 160,40.6 C166.67,35.37 173.33,30.2 180,27.1 C186.67,24.0 193.33,22.0 200,22 C206.67,22.0 213.33,24.0 220,27.1 C226.67,30.2 233.33,35.37 240,40.6 C246.67,45.83 253.33,52.6 260,58.5 C266.67,64.4 273.33,70.73 280,76 C286.67,81.27 293.33,86.15 300,90.1 C306.67,94.05 313.33,97.18 320,99.7 C326.67,102.22 333.33,103.82 340,105.2 C346.67,106.58 356.67,107.53 360,108 L360,110 L40,110 Z" fill="url(#bellFill)"/>
+          <path d="M40,108 C43.33,107.53 53.33,106.58 60,105.2 C66.67,103.82 73.33,102.22 80,99.7 C86.67,97.18 93.33,94.05 100,90.1 C106.67,86.15 113.33,81.27 120,76 C126.67,70.73 133.33,64.4 140,58.5 C146.67,52.6 153.33,45.83 160,40.6 C166.67,35.37 173.33,30.2 180,27.1 C186.67,24.0 193.33,22.0 200,22 C206.67,22.0 213.33,24.0 220,27.1 C226.67,30.2 233.33,35.37 240,40.6 C246.67,45.83 253.33,52.6 260,58.5 C266.67,64.4 273.33,70.73 280,76 C286.67,81.27 293.33,86.15 300,90.1 C306.67,94.05 313.33,97.18 320,99.7 C326.67,102.22 333.33,103.82 340,105.2 C346.67,106.58 356.67,107.53 360,108" stroke="var(--sky-deep)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+
+          <!-- distribution bar: lower | mid | higher -->
+          <g clip-path="url(#barClip)">
+            <rect x="40"    y="114" width="106.7" height="18" fill="var(--amber)" opacity=".9"/>
+            <rect x="146.7" y="114" width="106.6" height="18" fill="var(--sky)"   opacity=".9"/>
+            <rect x="253.3" y="114" width="106.7" height="18" fill="var(--teal)"  opacity=".9"/>
+            <rect x="145.7" y="114" width="2" height="18" fill="var(--paper-2)"/>
+            <rect x="252.3" y="114" width="2" height="18" fill="var(--paper-2)"/>
+          </g>
+          <rect x="40" y="114" width="320" height="18" rx="9" fill="none" stroke="var(--line)" stroke-width="1"/>
+
+          <!-- band labels -->
+          <text x="93"  y="148" text-anchor="middle" font-family="var(--mono)" font-size="10" letter-spacing="1.5" fill="var(--muted)">LOWER</text>
+          <text x="200" y="148" text-anchor="middle" font-family="var(--mono)" font-size="10" letter-spacing="1.5" fill="var(--muted)">MID</text>
+          <text x="307" y="148" text-anchor="middle" font-family="var(--mono)" font-size="10" letter-spacing="1.5" fill="var(--muted)">HIGHER</text>
+
+          <!-- LEFT persona under LOWER, low score -->
+          <g fill="var(--muted)">
+            <circle cx="93" cy="174" r="8"/>
+            <path d="M79,202 v-3 a14,14 0 0 1 28,0 v3 Z"/>
+          </g>
+          <text x="93" y="239" text-anchor="middle" font-family="var(--hand)" font-size="25" font-weight="700" fill="var(--amber)">3 / 10</text>
+          <path transform="translate(93,233) rotate(-5) scale(1.2)" d="M27,-7 C31,-18 13,-23 -3,-21 C-20,-19 -31,-8 -29,6 C-27,18 -8,23 9,20 C25,17 32,3 26,-9 C22,-16 15,-19 8,-20" stroke="var(--amber)" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+
+          <!-- MID persona under MID, middle score -->
+          <g fill="var(--muted)">
+            <circle cx="200" cy="174" r="8"/>
+            <path d="M186,202 v-3 a14,14 0 0 1 28,0 v3 Z"/>
+          </g>
+          <text x="200" y="239" text-anchor="middle" font-family="var(--hand)" font-size="25" font-weight="700" fill="var(--sky-deep)">6 / 10</text>
+          <path transform="translate(200,233) rotate(2) scale(1.2)" d="M31,1 C30,-15 12,-22 -4,-20 C-21,-18 -31,-6 -28,8 C-25,19 -6,23 10,19 C26,15 31,1 25,-10 C21,-16 13,-19 5,-19 C-1,-19 -5,-16 -7,-13" stroke="var(--sky-deep)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+
+          <!-- RIGHT persona under HIGHER, high score -->
+          <g fill="var(--muted)">
+            <circle cx="307" cy="174" r="8"/>
+            <path d="M293,202 v-3 a14,14 0 0 1 28,0 v3 Z"/>
+          </g>
+          <text x="307" y="239" text-anchor="middle" font-family="var(--hand)" font-size="25" font-weight="700" fill="var(--teal)">9 / 10</text>
+          <path transform="translate(307,233) rotate(4) scale(1.2)" d="M32,-4 C34,-18 16,-24 -1,-22 C-21,-21 -33,-9 -31,5 C-29,19 -9,24 9,21 C27,18 35,4 29,-9 C25,-16 18,-19 10,-21 C4,-22 0,-21 -5,-18" stroke="var(--teal)" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </svg>
+        <p style="margin-top:.9rem; text-align:center; font-family:var(--serif); font-size:clamp(.95rem,1.3vw,1.12rem); line-height:1.3; color:var(--muted); letter-spacing:-.005em;">
+          A score says how much, never <em style="font-style:italic; color:var(--sky-deep); font-weight:500;">what</em> to teach, or <em style="font-style:italic; color:var(--sky-deep); font-weight:500;">how</em>.
+        </p>
+      </div>
+    </div>
+
+    <div class="cards three" data-r style="--d:4; margin-top: clamp(1.6rem,3.5vh,2.6rem); max-width: 1180px;">
+      <div class="card">
+        <span class="cn">01</span>
+        <div class="ct">The student who's behind</div>
+        <div class="cb">A missing prerequisite means every new lesson lands on a shaky foundation.</div>
+      </div>
+      <div class="card">
+        <span class="cn">02</span>
+        <div class="ct">The student keeping up</div>
+        <div class="cb">Fine on the surface, but with quiet gaps no one stops to catch.</div>
+      </div>
+      <div class="card">
+        <span class="cn">03</span>
+        <div class="ct">The student racing ahead</div>
+        <div class="cb">Already knows it, with no path forward. Boredom quietly becomes apathy.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 3 · WHY NOW ============ -->
+  <section class="deck-slide s-paper-2">
+    <div class="stack" style="max-width: 64ch;">
+      <div class="kicker" data-r style="--d:0">Why now</div>
+      <h2 class="display sm" data-r style="--d:1">Half the board paper now tests understanding. <span class="accent">More practice won't get them there.</span></h2>
+      <p class="lead" data-r style="--d:2">
+        The marks that move a school's results are lost by students who learned the steps without the idea.
+        A question bank can show who got it wrong. It can't <span class="ink-accent">teach them why.</span>
+      </p>
+    </div>
+    <div class="stats" data-r style="--d:3; margin-top: clamp(1.8rem,4vh,3rem); max-width:1180px;">
+      <div class="stat"><div class="sn">50%</div><div class="sl">of the CBSE Class 10 paper is now competency-based: case studies, real-life problems, reasoning</div></div>
+      <div class="stat"><div class="sn">2</div><div class="sl">board exams a year for Class 10. The second chance only helps if you know what each student got wrong</div></div>
+      <div class="stat"><div class="sn">Feb</div><div class="sl">the next main board exam. Preboards come sooner than that</div></div>
+      <div class="stat"><div class="sn">1 : 30</div><div class="sl">one teacher, thirty students, each stuck on something different</div></div>
+    </div>
+  </section>
+
+  <!-- ============ 3 · WHY IT COMPOUNDS ============ -->
+  <section class="deck-slide s-paper">
+    <div class="two-col">
+      <div class="stack">
+        <div class="kicker" data-r style="--d:0">Why it compounds</div>
+        <h2 class="display sm" data-r style="--d:1">A gap in Grade 6 becomes a <span class="accent">wall</span> in the board year.</h2>
+        <p class="lead" data-r style="--d:2">
+          Knowledge isn't a list, it's a graph. Miss <span class="em">equivalent fractions</span> in Grade 6, and
+          adding fractions, <span class="em">ratios and proportions</span>, and every algebraic expression built on them
+          wobble in Grade 9.
+        </p>
+        <p class="lead" data-r style="--d:3">
+          Traditional tests show the symptom, a failed sum like <span class="em">3/4 + 1/6</span>.
+          They never show the <span class="ink-accent">missing prerequisite underneath it.</span>
+        </p>
+      </div>
+      <div class="side-visual" data-r style="--d:2; display:grid; place-items:center;">
+        <svg viewBox="0 0 420 420" width="100%" style="max-width:420px; color: var(--navy);" fill="none" aria-hidden="true">
+          <g class="motif" style="position:static;">
+            <line class="edge" x1="210" y1="60"  x2="110" y2="170"/>
+            <line class="edge" x1="210" y1="60"  x2="310" y2="170"/>
+            <line class="edge" x1="110" y1="170" x2="70"  y2="320"/>
+            <line class="edge" x1="110" y1="170" x2="200" y2="300" style="stroke:var(--amber); stroke-width:2; opacity:.9; stroke-dasharray:6 5;"/>
+            <line class="edge" x1="310" y1="170" x2="200" y2="300"/>
+            <line class="edge" x1="310" y1="170" x2="350" y2="320"/>
+            <line class="edge" x1="200" y1="300" x2="200" y2="390" style="stroke:var(--amber); stroke-width:2; opacity:.9; stroke-dasharray:6 5;"/>
+          </g>
+          <circle cx="210" cy="60"  r="13" fill="var(--teal)"/>
+          <circle cx="110" cy="170" r="11" fill="var(--sky-deep)"/>
+          <circle cx="310" cy="170" r="11" fill="var(--sky-deep)"/>
+          <!-- broken / missing prerequisite -->
+          <circle cx="200" cy="300" r="16" fill="#fff" stroke="var(--amber)" stroke-width="3" stroke-dasharray="5 4"/>
+          <text x="200" y="306" text-anchor="middle" font-family="var(--mono)" font-size="18" fill="var(--amber)" font-weight="700">!</text>
+          <circle cx="70"  cy="320" r="10" fill="var(--navy)" opacity=".5"/>
+          <circle cx="350" cy="320" r="10" fill="var(--navy)" opacity=".5"/>
+          <circle cx="200" cy="390" r="12" fill="var(--navy)" opacity=".35"/>
+
+          <!-- concept labels, rooted in the CBSE Grade-6 "Fractions" knowledge graph -->
+          <g font-family="var(--mono)">
+            <text x="210" y="37"  text-anchor="middle" font-size="10"   font-weight="600" fill="var(--ink)">Fractions</text>
+            <text x="92"  y="174" text-anchor="end"    font-size="10"   fill="var(--ink)">Unit fraction</text>
+            <text x="328" y="174" text-anchor="start"  font-size="10"   fill="var(--ink)">Equal share</text>
+            <text x="70"  y="344" text-anchor="middle" font-size="9.5"  fill="var(--muted)">Compare</text>
+            <text x="350" y="344" text-anchor="middle" font-size="9.5"  fill="var(--muted)">Lowest terms</text>
+            <text x="200" y="412" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--ink)">Add fractions</text>
+            <!-- the missing prerequisite -->
+            <text x="224" y="295" text-anchor="start" font-size="10.5" font-weight="700" fill="var(--amber)">Equivalent</text>
+            <text x="224" y="307" text-anchor="start" font-size="10.5" font-weight="700" fill="var(--amber)">fractions</text>
+            <text x="224" y="319" text-anchor="start" font-size="7"    letter-spacing="1.5" fill="var(--amber)">MISSING</text>
+          </g>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 5 · WHAT MAKES US DIFFERENT ============ -->
+  <section class="deck-slide s-ink">
+    <div class="stack" style="max-width: 62ch;">
+      <div class="kicker" data-r style="--d:0">What makes us different</div>
+      <h2 class="display sm" data-r style="--d:1">Others test. <span class="accent">WizzBox teaches.</span></h2>
+      <p class="lead" data-r style="--d:2; color: rgba(246,237,226,.74);">
+        Question banks, quiz apps and test series all do the same job: give questions, mark them, show a score.
+        WizzBox<span style="color:var(--sky)">.AI</span> is a one-on-one tutor for every student.
+      </p>
+    </div>
+    <div class="vs" data-r style="--d:3;">
+      <div class="vh vblank"></div>
+      <div class="vh">Question banks &amp; test apps</div>
+      <div class="vh vw">WizzBox</div>
+
+      <div class="vk">A student gets it wrong</div>
+      <div>Marks it wrong, shows the answer, serves more questions</div>
+      <div class="vw">Finds why, then teaches that one idea in a lesson made for that student</div>
+
+      <div class="vk">Who does the teaching</div>
+      <div>The teacher, later, if there's time</div>
+      <div class="vw">WizzBox, right then, one-on-one. The teacher sees what was taught</div>
+
+      <div class="vk">What the school gets</div>
+      <div>Scores and chapter reports</div>
+      <div class="vw">Students who've been taught, proven on fresh questions</div>
+
+      <div class="vk">Measured on</div>
+      <div>Questions attempted</div>
+      <div class="vw">Concepts actually learned</div>
+    </div>
+  </section>
+
+  <!-- ============ 5 · THE LOOP ============ -->
+  <section class="deck-slide s-paper">
+    <div class="stack" style="max-width: 60ch;">
+      <div class="kicker" data-r style="--d:0">How it works</div>
+      <h2 class="display sm" data-r style="--d:1">Diagnose. Teach. <span style="white-space:nowrap">Re-check.</span> <span class="accent">Advance.</span></h2>
+    </div>
+    <div class="steps" data-r style="--d:2; margin-top: clamp(2rem,4vh,3.2rem); max-width:1180px;">
+      <div class="step">
+        <div class="sk"><b>1</b> DIAGNOSE</div>
+        <div class="st">Find the exact gap</div>
+        <div class="sb">A short adaptive check walks back through the prerequisites to the one concept that's missing.</div>
+      </div>
+      <div class="step">
+        <div class="sk"><b>2</b> TEACH</div>
+        <div class="st">A lesson for that gap</div>
+        <div class="sb">A narrated lesson is written for that concept, one-on-one. Built for the gap, not picked off a shelf.</div>
+      </div>
+      <div class="step">
+        <div class="sk"><b>3</b> RE-CHECK</div>
+        <div class="st">Prove it landed</div>
+        <div class="sb">Fresh questions, never the ones they just saw, confirm the student understands it now.</div>
+      </div>
+      <div class="step">
+        <div class="sk"><b>4</b> ADVANCE</div>
+        <div class="st">Move on, or teach again</div>
+        <div class="sb">Mastered, they move on. Not yet, and a second, different lesson is built from what they missed.</div>
+      </div>
+    </div>
+    <p class="lead" data-r style="--d:3; margin-top: clamp(1.6rem,3vh,2.4rem);">
+      A <span class="ink-accent">loop, not a report.</span> Your school decides how many rounds run before a teacher steps in.
+    </p>
+  </section>
+
+  <!-- ============ 7 · PILLAR 1 · ONE-ON-ONE LESSONS ============ -->
+  <section class="deck-slide s-paper-2">
+    <div class="two-col">
+      <div class="side-visual" data-r style="--d:3; order:0;">
+        <div class="mock" style="background: var(--navy); border-color: rgba(246,237,226,.12); color: var(--paper);">
+          <div class="mock-head">
+            <span class="mock-title" style="color: rgba(246,237,226,.6)">One-on-one lesson · playing</span>
+            <div class="dots3"><i style="background:var(--sky)"></i><i style="background:rgba(246,237,226,.25)"></i><i style="background:rgba(246,237,226,.25)"></i></div>
+          </div>
+          <!-- the lesson slide: a non-interactive viz being taught -->
+          <div style="border:1px solid rgba(246,237,226,.13); border-radius:10px; background:rgba(255,255,255,.03); padding:.9rem 1rem;">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:1rem;">
+              <!-- math equation, rendered -->
+              <div style="display:flex; align-items:center; gap:.35rem; font-size:1.5rem; color:rgba(246,237,226,.92);">
+                <span class="lfrac"><span>3</span><span class="d den-glow">4</span></span>
+                <span style="opacity:.55;">+</span>
+                <span class="lfrac"><span>1</span><span class="d den-glow" style="animation-delay:.7s;">6</span></span>
+                <span style="opacity:.45; font-size:1.1rem;">= ?</span>
+              </div>
+              <!-- slide text, on the right -->
+              <div style="text-align:right;">
+                <div style="font-family:var(--mono); font-size:.54rem; letter-spacing:.13em; text-transform:uppercase; color:var(--teal-br); margin-bottom:.3rem;">Lesson · Fractions</div>
+                <div style="font-family:var(--serif); font-size:.92rem; color:rgba(246,237,226,.82); line-height:1.25;">Re-slice to 12ths<br>now they line up.</div>
+              </div>
+            </div>
+            <!-- slice-size viz with the LCM (12) grid overlaid as a dashed separator -->
+            <div style="margin-top:.85rem; display:flex; flex-direction:column; gap:.4rem;">
+              <div style="display:flex; align-items:center; gap:.55rem;">
+                <span style="font-family:var(--mono); font-size:.66rem; color:rgba(246,237,226,.55); width:1.5rem;">1/4</span>
+                <div style="position:relative; flex:1;">
+                  <div style="display:flex; gap:2px;">
+                    <span class="slice-on" style="flex:1; height:16px; border-radius:3px; background:var(--sky);"></span>
+                    <span style="flex:1; height:16px; border-radius:3px; background:rgba(246,237,226,.1);"></span>
+                    <span style="flex:1; height:16px; border-radius:3px; background:rgba(246,237,226,.1);"></span>
+                    <span style="flex:1; height:16px; border-radius:3px; background:rgba(246,237,226,.1);"></span>
+                  </div>
+                  <div class="lcm-grid"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+                </div>
+              </div>
+              <div style="display:flex; align-items:center; gap:.55rem;">
+                <span style="font-family:var(--mono); font-size:.66rem; color:rgba(246,237,226,.55); width:1.5rem;">1/6</span>
+                <div style="position:relative; flex:1;">
+                  <div style="display:flex; gap:2px;">
+                    <span class="slice-on" style="flex:1; height:16px; border-radius:3px; background:var(--teal-br); animation-delay:.7s;"></span>
+                    <span style="flex:1; height:16px; border-radius:3px; background:rgba(246,237,226,.1);"></span>
+                    <span style="flex:1; height:16px; border-radius:3px; background:rgba(246,237,226,.1);"></span>
+                    <span style="flex:1; height:16px; border-radius:3px; background:rgba(246,237,226,.1);"></span>
+                    <span style="flex:1; height:16px; border-radius:3px; background:rgba(246,237,226,.1);"></span>
+                    <span style="flex:1; height:16px; border-radius:3px; background:rgba(246,237,226,.1);"></span>
+                  </div>
+                  <div class="lcm-grid"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+                </div>
+              </div>
+              <!-- legend: what the new (dashed) separator means -->
+              <div style="display:flex; align-items:center; gap:.4rem; padding-left:2.05rem; margin-top:.05rem;">
+                <span style="display:inline-block; width:16px; border-top:1.5px dashed var(--amber);"></span>
+                <span style="font-family:var(--mono); font-size:.58rem; letter-spacing:.04em; color:var(--amber);">split into the LCM, 12 parts that line up</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- spoken narration (subtitle) -->
+          <div style="font-family:var(--serif); font-size:clamp(1.02rem,1.5vw,1.22rem); font-weight:500; line-height:1.3; margin:1rem 0; text-align:center; color:rgba(246,237,226,.9);">
+            "Think of the denominator as the <span style="color:var(--sky)">size of each slice</span>…"
+          </div>
+
+          <!-- narration audio, centered & animated -->
+          <div class="eq" aria-hidden="true">
+            <i style="animation-delay:0s"></i><i style="animation-delay:-.5s"></i><i style="animation-delay:-.2s"></i>
+            <i style="animation-delay:-.8s"></i><i style="animation-delay:-.3s"></i><i style="animation-delay:-.6s"></i>
+            <i style="animation-delay:-.1s"></i><i style="animation-delay:-.7s"></i><i style="animation-delay:-.35s"></i>
+            <i style="animation-delay:-.9s"></i><i style="animation-delay:-.25s"></i><i style="animation-delay:-.55s"></i>
+            <i style="animation-delay:-.15s"></i><i style="animation-delay:-.75s"></i><i style="animation-delay:-.45s"></i>
+            <i style="animation-delay:-.65s"></i><i style="animation-delay:-.05s"></i><i style="animation-delay:-.85s"></i>
+          </div>
+
+          <div style="display:flex; justify-content:space-between; font-family:var(--mono); font-size:.72rem; color:rgba(246,237,226,.55); letter-spacing:.06em; margin-top:1rem;">
+            <span>● NARRATING</span><span>SUBTITLES ON</span><span>01:12 / 04:30</span>
+          </div>
+        </div>
+      </div>
+      <div class="stack">
+        <div class="row" style="align-items:baseline; gap:1.2rem;">
+          <span class="eyebrow-num" data-r style="--d:0">01</span>
+          <div class="kicker" data-r style="--d:0">Pillar · One-on-one teaching</div>
+        </div>
+        <h2 class="display sm" data-r style="--d:1">Lessons like the best teacher <span class="accent">you ever had.</span></h2>
+        <ul class="feat" data-r style="--d:2">
+          <li><strong>Built for the gap</strong>, written after WizzBox finds what this student is missing, so no two students get quite the same lesson.</li>
+          <li><strong>Narrated and captioned</strong>, every slide spoken aloud, with every term defined on tap for the weaker reader.</li>
+          <li><strong>The student works it, not just watches</strong>, hands-on steps, a hint when stuck, then a "show me".</li>
+          <li><strong>Raise Hand</strong>, a shy student asks privately, and the doubt reaches the teacher too.</li>
+          <li><strong>Still not landed?</strong> A second, <span class="em">different</span> lesson, not a replay of the first.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 8 · PILLAR 2 · DIAGNOSIS ============ -->
+  <section class="deck-slide s-paper">
+    <div class="two-col">
+      <div class="stack">
+        <div class="row" style="align-items:baseline; gap:1.2rem;">
+          <span class="eyebrow-num" data-r style="--d:0">02</span>
+          <div class="kicker" data-r style="--d:0" >Pillar · Diagnosis</div>
+        </div>
+        <h2 class="display sm" data-r style="--d:1">It finds the <span class="accent">real</span> gap, so the teaching is precise.</h2>
+        <ul class="feat" data-r style="--d:2">
+          <li><strong>A diagnosis, not a grade</strong>, each question shows <span class="em">why</span>, not just a <span class="em">number</span>.</li>
+          <li><strong>Wrong answers shape the lesson</strong>, what a student misses decides what's taught next.</li>
+          <li><strong>Slip or real gap?</strong> It tells them apart, and names the exact concept.</li>
+          <li><strong>Sharp and fast</strong>, a few questions, minutes to the gap.</li>
+        </ul>
+      </div>
+      <div class="side-visual" data-r style="--d:3;">
+        <div class="mock">
+          <div class="mock-head">
+            <span class="mock-title">Diagnostic · complete</span>
+            <div class="dots3"><i></i><i></i><i></i></div>
+          </div>
+          <!-- score summary: the student answers a set, no back-and-forth chat -->
+          <div style="display:flex; align-items:baseline; justify-content:space-between; margin-bottom:.7rem;">
+            <div style="font-family:var(--serif); font-size:1.5rem; font-weight:600; line-height:1;">7<span style="opacity:.4; font-size:1rem; font-weight:500;"> / 10 correct</span></div>
+            <span style="font-family:var(--mono); font-size:.66rem; letter-spacing:.1em; text-transform:uppercase; color:var(--muted);">Fractions · 10 questions</span>
+          </div>
+
+          <!-- per-question results: the misses cluster into one concept -->
+          <div style="display:flex; flex-direction:column; gap:.34rem;">
+            <div class="bar-row" style="margin:0;"><span class="bar-name" style="width:auto; flex:1; opacity:.55;">Reduce 6/8 to lowest terms</span><span class="bar-val" style="color:var(--teal);">✓</span></div>
+            <div class="bar-row" style="margin:0;"><span class="bar-name" style="width:auto; flex:1; opacity:.55;">Compare 2/3 and 3/5</span><span class="bar-val" style="color:var(--teal);">✓</span></div>
+            <div class="bar-row" style="background:rgba(201,119,47,.12); border-radius:9px; padding:.3rem .5rem; margin:0 -.5rem;"><span class="bar-name" style="width:auto; flex:1; color:var(--ink); font-weight:600;">3/4 + 1/6 <span style="font-family:var(--mono); font-size:.58rem; color:var(--amber); letter-spacing:.04em;">COMMON DENOM.</span></span><span class="bar-val" style="color:var(--amber); font-weight:700;">✗</span></div>
+            <div class="bar-row" style="background:rgba(201,119,47,.12); border-radius:9px; padding:.3rem .5rem; margin:0 -.5rem;"><span class="bar-name" style="width:auto; flex:1; color:var(--ink); font-weight:600;">5/6 − 1/3 <span style="font-family:var(--mono); font-size:.58rem; color:var(--amber); letter-spacing:.04em;">COMMON DENOM.</span></span><span class="bar-val" style="color:var(--amber); font-weight:700;">✗</span></div>
+            <div class="bar-row" style="background:rgba(201,119,47,.12); border-radius:9px; padding:.3rem .5rem; margin:0 -.5rem;"><span class="bar-name" style="width:auto; flex:1; color:var(--ink); font-weight:600;">Write 1/4 as ?/12 <span style="font-family:var(--mono); font-size:.58rem; color:var(--amber); letter-spacing:.04em;">EQUIVALENT</span></span><span class="bar-val" style="color:var(--amber); font-weight:700;">✗</span></div>
+          </div>
+
+          <!-- BEHIND THE SCENES: the silent diagnosis the student never sees -->
+          <div style="margin-top:clamp(1.2rem,1.8vw,1.7rem); background:var(--navy); border-radius:11px; padding:.6rem .75rem;">
+            <div style="font-family:var(--mono); font-size:.55rem; letter-spacing:.13em; text-transform:uppercase; color:var(--teal-br); margin-bottom:.4rem;">
+              Behind the scenes · not shown to student
+            </div>
+            <div style="font-family:var(--mono); font-size:.7rem; color:var(--amber); letter-spacing:.03em; line-height:1.7;">
+              ⚑ Gaps identified: common denominator (LCM), equivalent fractions<br>
+              <span style="color:var(--teal-br);">→ next lesson customized to these gaps</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 8 · PILLAR 3 · ORCHESTRATION / GRAPH ============ -->
+  <section class="deck-slide s-paper-2">
+    <div class="two-col">
+      <div class="stack">
+        <div class="row" style="align-items:baseline; gap:1.2rem;">
+          <span class="eyebrow-num" data-r style="--d:0">03</span>
+          <div class="kicker" data-r style="--d:0">Pillar · Orchestration</div>
+        </div>
+        <h2 class="display sm" data-r style="--d:1">The engine: an <span class="accent">orchestrator</span> on the knowledge graph.</h2>
+        <ul class="feat" data-r style="--d:2">
+          <li>Every concept mapped with its <strong>prerequisites and dependencies.</strong></li>
+          <li>The orchestrator sequences <span class="em">prerequisite → target → checkpoint.</span></li>
+          <li><strong>A sprint for some, a climb for others</strong>, it races past what's mastered and goes deep where it isn't.</li>
+          <li><strong>≈ 2,000 ways to teach a lesson</strong>, the orchestrator picks the one that fits each student.</li>
+          <li>Nothing is skipped. Nothing is wasted. The path is <span class="em">unique to each child.</span></li>
+        </ul>
+      </div>
+      <div class="side-visual" data-r style="--d:3; display:grid; place-items:center;">
+        <svg id="journeyGraph" viewBox="0 0 420 425" width="100%" style="max-width:420px; color: var(--navy);" fill="none" aria-hidden="true">
+          <!-- edges (faint) -->
+          <g stroke="var(--navy)" stroke-width="1.5" opacity=".16">
+            <line x1="210" y1="60" x2="110" y2="170"/>
+            <line x1="210" y1="60" x2="310" y2="170"/>
+            <line x1="110" y1="170" x2="70" y2="320"/>
+            <line x1="110" y1="170" x2="200" y2="300"/>
+            <line x1="310" y1="170" x2="200" y2="300"/>
+            <line x1="310" y1="170" x2="350" y2="320"/>
+            <line x1="200" y1="300" x2="200" y2="390"/>
+          </g>
+
+          <g class="jn" data-n="frac">
+            <circle class="ring" cx="210" cy="60" r="18" fill="none" stroke="var(--amber)" stroke-width="2"/>
+            <circle class="dot" cx="210" cy="60" r="11"/>
+            <path class="chk" d="M205,60.5 L208.5,64 L215,56" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            <text class="lbl" x="210" y="37" text-anchor="middle" font-family="var(--mono)" font-size="10">Fractions</text>
+          </g>
+          <g class="jn" data-n="unit">
+            <circle class="ring" cx="110" cy="170" r="18" fill="none" stroke="var(--amber)" stroke-width="2"/>
+            <circle class="dot" cx="110" cy="170" r="11"/>
+            <path class="chk" d="M105,170.5 L108.5,174 L115,166" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            <text class="lbl" x="92" y="174" text-anchor="end" font-family="var(--mono)" font-size="10">Unit fraction</text>
+          </g>
+          <g class="jn" data-n="equal">
+            <circle class="ring" cx="310" cy="170" r="18" fill="none" stroke="var(--amber)" stroke-width="2"/>
+            <circle class="dot" cx="310" cy="170" r="11"/>
+            <path class="chk" d="M305,170.5 L308.5,174 L315,166" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            <text class="lbl" x="328" y="174" text-anchor="start" font-family="var(--mono)" font-size="10">Equal share</text>
+          </g>
+          <g class="jn" data-n="equiv">
+            <circle class="ring" cx="200" cy="300" r="18" fill="none" stroke="var(--amber)" stroke-width="2"/>
+            <circle class="dot" cx="200" cy="300" r="11"/>
+            <path class="chk" d="M195,300.5 L198.5,304 L205,296" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            <text class="lbl" x="222" y="304" text-anchor="start" font-family="var(--mono)" font-size="10">Equivalent fractions</text>
+          </g>
+          <g class="jn" data-n="compare">
+            <circle class="ring" cx="70" cy="320" r="17" fill="none" stroke="var(--amber)" stroke-width="2"/>
+            <circle class="dot" cx="70" cy="320" r="10"/>
+            <path class="chk" d="M65,320.5 L68.5,324 L75,316" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            <text class="lbl" x="70" y="345" text-anchor="middle" font-family="var(--mono)" font-size="9.5">Compare</text>
+          </g>
+          <g class="jn" data-n="lowest">
+            <circle class="ring" cx="350" cy="320" r="17" fill="none" stroke="var(--amber)" stroke-width="2"/>
+            <circle class="dot" cx="350" cy="320" r="10"/>
+            <path class="chk" d="M345,320.5 L348.5,324 L355,316" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            <text class="lbl" x="350" y="345" text-anchor="middle" font-family="var(--mono)" font-size="9.5">Lowest terms</text>
+          </g>
+          <g class="jn" data-n="add">
+            <circle class="ring" cx="200" cy="390" r="18" fill="none" stroke="var(--amber)" stroke-width="2"/>
+            <circle class="dot" cx="200" cy="390" r="11"/>
+            <path class="chk" d="M195,390.5 L198.5,394 L205,386" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            <text class="lbl" x="200" y="414" text-anchor="middle" font-family="var(--mono)" font-size="10.5" font-weight="600">Add fractions</text>
+          </g>
+        </svg>
+
+        <div style="margin-top:.6rem; text-align:center;">
+          <div id="journeyWho" style="font-family:var(--serif); font-size:clamp(1.1rem,1.7vw,1.4rem); font-weight:600; color:var(--ink); min-height:1.3em;">Walking the graph…</div>
+          <div style="margin-top:.55rem; display:flex; gap:1.1rem; justify-content:center; font-family:var(--mono); font-size:.6rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted);">
+            <span><span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--teal); margin-right:.35rem; vertical-align:middle;"></span>mastered</span>
+            <span><span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--amber); margin-right:.35rem; vertical-align:middle;"></span>taught</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 10 · PROOF · FROM A LIVE CLASSROOM ============ -->
+  <section class="deck-slide s-paper">
+    <div class="two-col" style="align-items:center;">
+      <div class="stack">
+        <div class="kicker" data-r style="--d:0">From a live classroom</div>
+        <h2 class="display sm" data-r style="--d:1">Twenty-eight attempts. <span class="accent">One correct answer.</span></h2>
+        <p class="lead" data-r style="--d:2">
+          These Class 10 students weren't failing "HCF". They were missing one property:
+          when one number divides the other, the smaller number <span class="em">is</span> the HCF.
+        </p>
+        <p class="lead" data-r style="--d:3">
+          A quiz app gives them ten more HCF sums. WizzBox names the idea,
+          <span class="ink-accent">teaches it in a ten-minute lesson,</span> and checks with new questions.
+        </p>
+      </div>
+      <div class="side-visual" data-r style="--d:3;">
+        <div class="mock">
+          <div class="mock-head">
+            <span class="mock-title">Grade 10 · Real Numbers</span>
+            <div class="dots3"><i></i><i></i><i></i></div>
+          </div>
+          <div class="hq-sub">Asked one way · 12 attempts</div>
+          <div class="hq">If <b>c</b> is a multiple of <b>d</b>, what is the HCF of c and d?</div>
+          <div class="bar-row hcf"><span class="bar-name">c × d</span><div class="bar-track"><div class="bar-fill" style="width:50%"></div></div><span class="bar-val">6 of 12</span></div>
+<div class="bar-row hcf"><span class="bar-name">1</span><div class="bar-track"><div class="bar-fill" style="width:33%"></div></div><span class="bar-val">4 of 12</span></div>
+<div class="bar-row hcf"><span class="bar-name">c</span><div class="bar-track"><div class="bar-fill" style="width:8%"></div></div><span class="bar-val">1 of 12</span></div>
+<div class="bar-row hcf ok"><span class="bar-name">d ✓</span><div class="bar-track"><div class="bar-fill" style="width:0%"></div></div><span class="bar-val">0 of 12</span></div>
+          <div class="rule" style="margin:1rem 0 .9rem;"></div>
+          <div class="hq-sub">Asked another way · 16 attempts</div>
+          <div class="hq">If <b>q</b> is a factor of <b>p</b>, what is the HCF of p and q?</div>
+          <div class="bar-row hcf"><span class="bar-name">1</span><div class="bar-track"><div class="bar-fill" style="width:38%"></div></div><span class="bar-val">6 of 16</span></div>
+<div class="bar-row hcf"><span class="bar-name">p × q</span><div class="bar-track"><div class="bar-fill" style="width:31%"></div></div><span class="bar-val">5 of 16</span></div>
+<div class="bar-row hcf"><span class="bar-name">p</span><div class="bar-track"><div class="bar-fill" style="width:19%"></div></div><span class="bar-val">3 of 16</span></div>
+<div class="bar-row hcf ok"><span class="bar-name">q ✓</span><div class="bar-track"><div class="bar-fill" style="width:6%"></div></div><span class="bar-val">1 of 16</span></div>
+          <div style="margin-top:1rem; font-family:var(--mono); font-size:.62rem; letter-spacing:.04em; color:var(--muted);">
+            Real responses · Grade 10 group of 90 students · June–July 2026
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 11 · ALREADY RUNNING ============ -->
+  <section class="deck-slide s-paper-2">
+    <div class="stack" style="max-width: 60ch;">
+      <div class="kicker" data-r style="--d:0">In classrooms now</div>
+      <h2 class="display sm" data-r style="--d:1">Already teaching in a <span class="accent">CBSE classroom.</span></h2>
+    </div>
+    <div class="stats" data-r style="--d:2; margin-top: clamp(1.6rem,3.5vh,2.6rem); max-width: 1180px;">
+      <div class="stat"><div class="sn">90</div><div class="sl">Class 10 students, Real Numbers, June–July 2026</div></div>
+      <div class="stat"><div class="sn">2,435</div><div class="sl">questions answered</div></div>
+      <div class="stat"><div class="sn">43</div><div class="sl">lessons written for specific gaps, not picked from a library</div></div>
+      <div class="stat"><div class="sn">174</div><div class="sl">different questions served, so students couldn't just copy each other</div></div>
+    </div>
+    <div class="cards two" data-r style="--d:3; margin-top: clamp(1.8rem,3.5vh,2.6rem); max-width: 1180px;">
+      <div class="card">
+        <div class="quote">WizzBox teaches students in the ways I haven't thought of before.</div>
+        <div class="quote-by">Teacher · CBSE pilot school</div>
+      </div>
+      <div class="card">
+        <div class="quote">I highly recommend this to my students. I love how it goes to the root of a misunderstanding.</div>
+        <div class="quote-by">Teacher · CBSE pilot school</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 9 · CURRICULUM ============ -->
+  <section class="deck-slide s-ink">
+    <div class="stack" style="max-width: 60ch;">
+      <div class="kicker" data-r style="--d:0">Built on your curriculum</div>
+      <h2 class="display sm" data-r style="--d:1">Built to your curriculum. <span class="accent">Ready on day one.</span></h2>
+    </div>
+    <div class="stats" data-r style="--d:2; margin-top: clamp(2rem,4.5vh,3.4rem); max-width: 1180px;">
+      <div class="stat"><div class="sn">190,000+</div><div class="sl">curriculum-aligned questions, graphs &amp; visuals</div></div>
+      <div class="stat"><div class="sn">4,300+</div><div class="sl">concept nodes mapped, prerequisite by prerequisite</div></div>
+      <div class="stat"><div class="sn">200–300</div><div class="sl">questions each student attempts, per chapter</div></div>
+      <div class="stat"><div class="sn" style="font-style:italic;">Infinite</div><div class="sl">custom unit-end &amp; midterm exams, at scale</div></div>
+    </div>
+    <div class="pills" data-r style="--d:3; margin-top: clamp(1.8rem,3.5vh,2.6rem);">
+      <span class="pill">Mathematics</span>
+      <span class="pill">Physics</span>
+      <span class="pill">Chemistry</span>
+      <span class="pill">CBSE · ICSE · IB · Cambridge</span>
+      <span class="pill" style="border-color:var(--teal-br); color:var(--teal-br);">Grades 8–10 ready now</span>
+      <span class="pill">Grades 4–7 being built</span>
+    </div>
+  </section>
+
+  <!-- ============ 10 · FOR TEACHERS ============ -->
+  <section class="deck-slide s-paper">
+    <div class="two-col wide-right">
+      <div class="stack">
+        <div class="kicker" data-r style="--d:0">For your teachers</div>
+        <h2 class="display sm" data-r style="--d:1">Less marking. <span class="accent">More teaching.</span></h2>
+        <ul class="feat" data-r style="--d:2">
+          <li>A <strong>live dashboard</strong> of every student's mastery, updated in real time.</li>
+          <li>See exactly <span class="em">which concept</span> each child is stuck on, not just a grade.</li>
+          <li><strong>Bloom's-level breakdown</strong> of where the class is strong or shaky.</li>
+          <li><strong>Homework and unit tests marked for you</strong>, written answers graded to a rubric. Teachers can override any mark.</li>
+          <li>Toggle chapters on or off to match your <span class="em">lesson plan.</span></li>
+        </ul>
+      </div>
+      <div class="side-visual" data-r style="--d:3;">
+        <!-- concept-mastery heatmap -->
+        <div class="card" data-r style="--d:3;">
+          <div class="mock-head" style="margin-bottom:.55rem;">
+            <span class="mock-title">Class 6-A · mastery by concept</span>
+            <div style="display:flex; gap:.7rem; font-family:var(--mono); font-size:.56rem; letter-spacing:.04em; text-transform:uppercase; color:var(--muted);">
+              <span><span class="heat-chip" style="background:var(--amber)"></span>weak</span>
+              <span><span class="heat-chip" style="background:#eab308"></span>ok</span>
+              <span><span class="heat-chip" style="background:var(--teal)"></span>strong</span>
+            </div>
+          </div>
+          <div class="heat" style="grid-template-columns: 50px repeat(6, 1fr); grid-template-rows: 56px repeat(5, 30px); margin: 1rem 0 1.15rem;">
+            <!-- highlight overlay: weakest column (Common denom., col 4) + weakest student (Kabir, row 4) -->
+            <div class="heat-hl" aria-hidden="true" style="grid-template-columns: 50px repeat(6, 1fr); grid-template-rows: 56px repeat(5, 30px);">
+              <i style="grid-column: 4; grid-row: 1 / -1; margin:-5px -4px;"></i>
+              <i style="grid-column: 1 / -1; grid-row: 4; margin:-4px -5px;"></i>
+            </div>
+            <div></div>
+            <div class="heat-h"><span>Equal share</span></div>
+            <div class="heat-h"><span>Equivalent</span></div>
+            <div class="heat-h"><span>Common denom.</span></div>
+            <div class="heat-h"><span>Add &amp; subtract</span></div>
+            <div class="heat-h"><span>Compare</span></div>
+            <div class="heat-h"><span>Lowest terms</span></div>
+
+            <div class="heat-rl"><span>Aarav</span></div>
+            <div class="heat-c"><div class="hb" style="width:96%; background:var(--teal)"></div></div>
+            <div class="heat-c"><div class="hb" style="width:90%; background:var(--teal)"></div></div>
+            <div class="heat-c"><div class="hb" style="width:58%; background:#eab308"></div></div>
+            <div class="heat-c"><div class="hb" style="width:94%; background:var(--teal)"></div></div>
+            <div class="heat-c"><div class="hb" style="width:90%; background:var(--teal)"></div></div>
+            <div class="heat-c"><div class="hb" style="width:95%; background:var(--teal)"></div></div>
+
+            <div class="heat-rl"><span>Diya</span></div>
+            <div class="heat-c"><div class="hb" style="width:84%; background:var(--teal)"></div></div>
+            <div class="heat-c"><div class="hb" style="width:76%; background:var(--teal)"></div></div>
+            <div class="heat-c"><div class="hb" style="width:52%; background:#eab308"></div></div>
+            <div class="heat-c"><div class="hb" style="width:82%; background:var(--teal)"></div></div>
+            <div class="heat-c"><div class="hb" style="width:74%; background:#eab308"></div></div>
+            <div class="heat-c"><div class="hb" style="width:86%; background:var(--teal)"></div></div>
+
+            <div class="heat-rl"><span>Kabir</span></div>
+            <div class="heat-c"><div class="hb" style="width:56%; background:#eab308"></div></div>
+            <div class="heat-c"><div class="hb" style="width:36%; background:var(--amber)"></div></div>
+            <div class="heat-c"><div class="hb" style="width:24%; background:var(--amber)"></div></div>
+            <div class="heat-c"><div class="hb" style="width:40%; background:var(--amber)"></div></div>
+            <div class="heat-c"><div class="hb" style="width:48%; background:var(--amber)"></div></div>
+            <div class="heat-c"><div class="hb" style="width:44%; background:var(--amber)"></div></div>
+
+            <div class="heat-rl"><span>Meera</span></div>
+            <div class="heat-c"><div class="hb" style="width:90%; background:var(--teal)"></div></div>
+            <div class="heat-c"><div class="hb" style="width:82%; background:var(--teal)"></div></div>
+            <div class="heat-c"><div class="hb" style="width:56%; background:#eab308"></div></div>
+            <div class="heat-c"><div class="hb" style="width:88%; background:var(--teal)"></div></div>
+            <div class="heat-c"><div class="hb" style="width:80%; background:var(--teal)"></div></div>
+            <div class="heat-c"><div class="hb" style="width:92%; background:var(--teal)"></div></div>
+
+            <div class="heat-rl"><span>Rohan</span></div>
+            <div class="heat-c"><div class="hb" style="width:82%; background:var(--teal)"></div></div>
+            <div class="heat-c"><div class="hb" style="width:54%; background:#eab308"></div></div>
+            <div class="heat-c"><div class="hb" style="width:38%; background:var(--amber)"></div></div>
+            <div class="heat-c"><div class="hb" style="width:56%; background:#eab308"></div></div>
+            <div class="heat-c"><div class="hb" style="width:78%; background:var(--teal)"></div></div>
+            <div class="heat-c"><div class="hb" style="width:56%; background:#eab308"></div></div>
+          </div>
+          <div class="rule" style="margin:.4rem 0 .7rem;"></div>
+          <div style="font-family:var(--mono); font-size:.72rem; color:var(--muted); letter-spacing:.03em; line-height:1.7;">
+            ⚑ Weakest concept, <b style="color:var(--amber);">common denominators</b>: the whole class is stuck.<br>
+            ⚑ Student to watch, <b style="color:var(--amber);">Kabir</b>: slipping across the board.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 14 · WHAT EACH PERSON GETS ============ -->
+  <section class="deck-slide s-paper-2">
+    <div class="stack" style="max-width: 62ch;">
+      <div class="kicker" data-r style="--d:0">What it means for <span class="school-name">your school</span></div>
+      <h2 class="display sm" data-r style="--d:1">One tutor per student. <span class="accent">A result everyone can see.</span></h2>
+    </div>
+    <div class="cards five" data-r style="--d:2; margin-top: clamp(1.8rem,3.5vh,2.6rem); max-width: 1180px;">
+      <div class="card">
+        <span class="cn">MANAGEMENT</span>
+        <div class="ct">Pay for learning, not logins</div>
+        <div class="cb">Lift the middle of the class and the results follow. Priced on your students' improvement, on your own tests.</div>
+      </div>
+      <div class="card">
+        <span class="cn">PRINCIPAL</span>
+        <div class="ct">Ready for the new paper</div>
+        <div class="cb">Half the board paper tests understanding. Weak foundations fixed in Class 9, not discovered in Class 10.</div>
+      </div>
+      <div class="card">
+        <span class="cn">TEACHERS</span>
+        <div class="ct">Their teaching, times thirty</div>
+        <div class="cb">They teach the lesson. WizzBox handles "I still don't get it", and marks the homework.</div>
+      </div>
+      <div class="card">
+        <span class="cn">PARENTS</span>
+        <div class="ct">A tutor, inside school</div>
+        <div class="cb">The one-on-one help they pay tuition for, plus a straight answer on what their child is working on.</div>
+      </div>
+      <div class="card">
+        <span class="cn">STUDENTS</span>
+        <div class="ct">It never tires of explaining</div>
+        <div class="cb">Got it wrong? It teaches you why, at your pace, as many times as it takes.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 11 · HOW IT FITS ============ -->
+  <section class="deck-slide s-paper">
+    <div class="stack" style="max-width: 60ch;">
+      <div class="kicker" data-r style="--d:0">How it fits</div>
+      <h2 class="display sm" data-r style="--d:1">No extra period. <span class="accent">It's the homework they already do.</span></h2>
+    </div>
+    <div class="checks" data-r style="--d:2; margin-top: clamp(1.8rem,3.5vh,2.8rem);">
+      <div class="check">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="11" fill="var(--teal)"/><path d="M7 12.5l3.2 3.2L17 9" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <p><b>20–30 minutes a day</b>, as homework or in a lab period, on the chapter your class is on. No timetable change.</p>
+      </div>
+      <div class="check">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="11" fill="var(--sky)"/><path d="M7 12.5l3.2 3.2L17 9" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <p><b>One 40-minute teacher training.</b> Reports are built to be read in the two minutes before class.</p>
+      </div>
+      <div class="check">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="11" fill="var(--teal)"/><path d="M7 12.5l3.2 3.2L17 9" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <p><b>Organised by sections</b>, mirrors the classes and divisions you already have.</p>
+      </div>
+      <div class="check">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="11" fill="var(--sky)"/><path d="M7 12.5l3.2 3.2L17 9" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <p><b>Admins stay in control</b>, choose exactly which chapters go live, when.</p>
+      </div>
+      <div class="check">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="11" fill="var(--teal)"/><path d="M7 12.5l3.2 3.2L17 9" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <p><b>Runs in any browser</b>, no installs, no new hardware, works on the devices you have.</p>
+      </div>
+      <div class="check">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="11" fill="var(--sky)"/><path d="M7 12.5l3.2 3.2L17 9" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <p><b>Insights flow back to teachers</b>, progress and gaps, ready for parent-teacher meetings.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 12 · ROLLOUT ============ -->
+  <section class="deck-slide s-paper-2">
+    <div class="stack" style="max-width: 60ch;">
+      <div class="kicker" data-r style="--d:0">Getting started</div>
+      <h2 class="display sm" data-r style="--d:1">8 weeks. Class 10. <span class="accent">Finished before preboards.</span></h2>
+    </div>
+    <div class="timeline" data-r style="--d:2; max-width: 1180px;">
+      <div class="tnode">
+        <div class="tdot">0</div>
+        <div class="twk">Week 0</div>
+        <div class="tt">Your baseline test</div>
+        <div class="tb">Your teachers set and mark a short test on chapters already taught. We set up the sections.</div>
+      </div>
+      <div class="tnode">
+        <div class="tdot">1</div>
+        <div class="twk">Week 1</div>
+        <div class="tt">Every gap on one screen</div>
+        <div class="tb">A misconception report for each section, student by student, idea by idea.</div>
+      </div>
+      <div class="tnode">
+        <div class="tdot">8</div>
+        <div class="twk">Weeks 1–8</div>
+        <div class="tt">One-on-one lessons</div>
+        <div class="tb">20–30 minutes a day. Each student is taught the ideas they're missing, and re-checked.</div>
+      </div>
+      <div class="tnode">
+        <div class="tdot">✓</div>
+        <div class="twk">Week 8</div>
+        <div class="tt">Your end test, your verdict</div>
+        <div class="tb">A matched test with new questions, marked by your teachers. You see the gain, student by student.</div>
+      </div>
+    </div>
+    <p class="lead" data-r style="--d:3; margin-top: clamp(1.6rem,3vh,2.4rem);">
+      Your teachers set the test and mark it. <span class="ink-accent">You judge the outcome, not us.</span>
+    </p>
+  </section>
+
+  <!-- ============ 17 · PRICING ============ -->
+  <!-- EDIT PRICES HERE: every price and threshold below is plain text. -->
+  <section class="deck-slide s-paper">
+    <div class="stack" style="max-width: 62ch;">
+      <div class="kicker" data-r style="--d:0">The offer</div>
+      <h2 class="display sm" data-r style="--d:1">Pay for results, <span class="accent">not for logins.</span></h2>
+    </div>
+    <div class="cards two" data-r style="--d:2; margin-top: clamp(1.4rem,3vh,2.2rem); max-width: 1180px;">
+      <div class="card price">
+        <span class="cn">OPTION A · PILOT WITH A GUARANTEE</span>
+        <div class="ct">Founding pilot</div>
+        <div class="pa">₹750<small>per student, 8 weeks</small></div>
+        <ul>
+          <li>Full refund if students haven't closed at least 60% of the gaps WizzBox found, checked on fresh questions.</li>
+          <li>Every rupee credited to the annual plan.</li>
+        </ul>
+      </div>
+      <div class="card price featured">
+        <span class="cn">OPTION B · PAY PER STUDENT WHO IMPROVES</span>
+        <div class="ct">Outcome pilot</div>
+        <div class="pa">₹250<small>per student, plus ₹500 for each student who improves</small></div>
+        <ul>
+          <li>"Improves" means at least 15 marks out of 100 on your own matched test.</li>
+          <li>Never more than ₹750 per student. Credited to the annual plan.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="price-strip" data-r style="--d:3;">
+      <div><b>Annual · flat</b><strong>₹3,000</strong> per student per year. Founding partners: <strong>₹2,000</strong>, locked for two years.</div>
+      <div><b>Annual · on results</b><strong>₹1,000</strong> per student, plus <strong>₹2,000</strong> for each student who improves.</div>
+      <div><b>Founding partner</b>Locked price in return for a co-branded case study. Physics and Chemistry included.</div>
+    </div>
+    <p class="fine" data-r style="--d:4;">Outcome pricing counts students who use WizzBox at least 3 days a week. Students below that are billed at the full rate, because the result depends on use.</p>
+  </section>
+
+  <!-- ============ 14 · CLOSING ============ -->
+  <section class="deck-slide s-ink">
+    <svg class="motif side-visual" style="top:50%; right:7%; transform:translateY(-50%); width:36%; color:rgba(246,237,226,.4);" viewBox="0 0 420 420" fill="none" aria-hidden="true">
+      <line class="edge" x1="80" y1="340" x2="180" y2="240"/>
+      <line class="edge" x1="180" y1="240" x2="300" y2="290"/>
+      <line class="edge" x1="180" y1="240" x2="220" y2="110"/>
+      <line class="edge" x1="220" y1="110" x2="350" y2="90"/>
+      <circle class="node warm pulse" cx="80" cy="340" r="8"/>
+      <circle class="node pulse" cx="180" cy="240" r="12" style="animation-delay:.5s"/>
+      <circle class="node hot pulse" cx="300" cy="290" r="8" style="animation-delay:1s"/>
+      <circle class="node pulse" cx="220" cy="110" r="9" style="animation-delay:.7s"/>
+      <circle class="node pulse" cx="350" cy="90" r="7" style="animation-delay:1.3s"/>
+    </svg>
+    <div class="stack" style="max-width: 56ch;">
+      <div class="kicker" data-r style="--d:0">Others test. WizzBox teaches.</div>
+      <h2 class="display" data-r style="--d:1">Teach every student like they're <span class="accent">your only student.</span></h2>
+      <p class="lead" data-r style="--d:2; color: rgba(246,237,226,.78);">
+        Start with Class 10 at one campus this month. You'll see every student's gaps in week one, and judge the result on your own test.
+      </p>
+      <div class="rule" data-r style="--d:3; margin-top:1.6rem; max-width:56ch;"></div>
+      <div class="foot" data-r style="--d:4; margin-top:1.4rem; font-size:.84rem;">
+        <span class="em" style="font-size:1rem;">WizzBox<span style="color:var(--sky)">.AI</span></span>
+        <span style="opacity:.4">/</span>
+        <span>dev@wizzbox.ai</span>
+        <span style="opacity:.4">/</span>
+        <span>8-week pilot</span>
+      </div>
+    </div>
+  </section>
+
+
+</main>
+
+<!-- ---------- Chrome ---------- -->
+<div class="deck-dots" id="dots"></div>
+<div class="hint" id="hint">Use <kbd>←</kbd> <kbd>→</kbd> to navigate · <kbd>F</kbd> fullscreen</div>
+<button class="fs-btn" id="fsBtn" aria-label="Toggle fullscreen" title="Fullscreen (F)">
+  <svg class="icon-enter" width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M9 3H3v6M15 3h6v6M9 21H3v-6M15 21h6v-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  <svg class="icon-exit" width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M3 9h6V3M21 9h-6V3M3 15h6v6M21 15h-6v6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+</button>
+<div class="deck-nav">
+  <button class="nav-btn" id="prev" aria-label="Previous slide">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+  <span class="nav-count"><b id="cur">1</b> / <span id="total">18</span></span>
+  <button class="nav-btn" id="next" aria-label="Next slide">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+</div>
+
+<script>
+  /* ============================================================
+     EDIT THESE TWO LINES to personalise the deck per school:
+     ============================================================ */
+  const SCHOOL_NAME = "Meridian School";          // e.g. "Springdale Public School"
+  const PRESENTER   = "The WizzBox.AI Team";  // your name / team
+  /* ============================================================ */
+
+  // Inject config
+  document.getElementById('cover-kicker').textContent = "A proposal for " + SCHOOL_NAME;
+  document.getElementById('cover-presenter').textContent = PRESENTER;
+  document.title = "WizzBox.AI: A Proposal for " + SCHOOL_NAME;
+  document.querySelectorAll('.school-name').forEach((el) => { el.textContent = SCHOOL_NAME; });
+
+  const slides = Array.from(document.querySelectorAll('.deck-slide'));
+  const total  = slides.length;
+  let current  = 0;
+
+  // build dots
+  const dotsWrap = document.getElementById('dots');
+  slides.forEach((_, i) => {
+    const b = document.createElement('button');
+    b.setAttribute('aria-label', 'Go to slide ' + (i + 1));
+    b.addEventListener('click', () => go(i));
+    dotsWrap.appendChild(b);
+  });
+  const dots = Array.from(dotsWrap.children);
+  document.getElementById('total').textContent = total;
+
+  const progress = document.getElementById('progress');
+  const curEl    = document.getElementById('cur');
+  const prevBtn  = document.getElementById('prev');
+  const nextBtn  = document.getElementById('next');
+  const hint     = document.getElementById('hint');
+
+  function render() {
+    slides.forEach((s, i) => {
+      s.classList.remove('active', 'is-past', 'is-future');
+      if (i === current)      s.classList.add('active');
+      else if (i < current)   s.classList.add('is-past');
+      else                    s.classList.add('is-future');
+    });
+    dots.forEach((d, i) => d.classList.toggle('on', i === current));
+    progress.style.width = (total === 1 ? 100 : (current / (total - 1)) * 100) + '%';
+    curEl.textContent = current + 1;
+    prevBtn.disabled = current === 0;
+    nextBtn.disabled = current === total - 1;
+  }
+
+  function go(i) {
+    current = Math.max(0, Math.min(total - 1, i));
+    render();
+    if (slides[current]) slides[current].scrollTop = 0; // start each slide at the top
+    if (history.replaceState) history.replaceState(null, '', '#' + (current + 1));
+  }
+  const next = () => go(current + 1);
+  const prev = () => go(current - 1);
+
+  nextBtn.addEventListener('click', next);
+  prevBtn.addEventListener('click', prev);
+
+  // keyboard
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); next(); hideHint(); }
+    else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); hideHint(); }
+    else if (e.key === 'Home') { e.preventDefault(); go(0); }
+    else if (e.key === 'End')  { e.preventDefault(); go(total - 1); }
+    else if (e.key === 'f' || e.key === 'F') { toggleFullscreen(); }
+  });
+
+  // touch swipe, only horizontal gestures flip slides, so vertical
+  // scrolling through tall slides on mobile works normally.
+  let tx = 0, ty = 0;
+  window.addEventListener('touchstart', (e) => {
+    tx = e.changedTouches[0].clientX; ty = e.changedTouches[0].clientY;
+  }, { passive: true });
+  window.addEventListener('touchend', (e) => {
+    const dx = e.changedTouches[0].clientX - tx;
+    const dy = e.changedTouches[0].clientY - ty;
+    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.4) { dx < 0 ? next() : prev(); hideHint(); }
+  }, { passive: true });
+
+  function toggleFullscreen() {
+    if (!document.fullscreenElement) document.documentElement.requestFullscreen?.();
+    else document.exitFullscreen?.();
+  }
+
+  const fsBtn = document.getElementById('fsBtn');
+  fsBtn.addEventListener('click', () => { toggleFullscreen(); hideHint(); });
+  document.addEventListener('fullscreenchange', () => {
+    fsBtn.classList.toggle('is-full', !!document.fullscreenElement);
+  });
+
+  let hintTimer = setTimeout(hideHint, 6000);
+  function hideHint() { hint.classList.add('gone'); clearTimeout(hintTimer); }
+
+  // init, honour a #N deep link (e.g. index.html#6)
+  const fromHash = parseInt((location.hash || '').replace('#', ''), 10);
+  if (!isNaN(fromHash) && fromHash >= 1 && fromHash <= total) current = fromHash - 1;
+  render();
+
+  /* ------------------------------------------------------------------
+     Center-or-scroll, automatically, for EVERY slide:
+     a slide stays vertically centered while its content fits, and flips
+     to top-aligned + scrollable the moment its content is taller than the
+     viewport. Driven purely by measuring content height, so any slide you
+     add or edit later gets the behaviour with no extra markup or CSS.
+     ------------------------------------------------------------------ */
+  function fitSlides() {
+    // each slide is position:absolute inset:0, so even inactive ones have a
+    // valid clientHeight (= viewport) and scrollHeight (= content) to compare.
+    // Decorative motifs bleed off the edges and would inflate scrollHeight, so
+    // hide them just for the measurement, then restore.
+    const motifs = Array.from(document.querySelectorAll('.deck-slide .motif'));
+    motifs.forEach((m) => { m.dataset.disp = m.style.display; m.style.display = 'none'; });
+    slides.forEach((s) => {
+      s.classList.toggle('overflowing', s.scrollHeight - s.clientHeight > 1);
+    });
+    motifs.forEach((m) => { m.style.display = m.dataset.disp || ''; });
+  }
+  fitSlides();
+  window.addEventListener('resize', fitSlides);
+  window.addEventListener('orientationchange', fitSlides);
+  window.addEventListener('load', fitSlides);            // images settled
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitSlides); // webfonts settled
+
+  /* ------------------------------------------------------------------
+     Graph traversal, the orchestrator walks the chapter's concept graph
+     node by node (bottom-up). A fluent student is cleared almost instantly;
+     a struggling one is taught node after node. Loops between the two.
+     ------------------------------------------------------------------ */
+  (function () {
+    const g = document.getElementById('journeyGraph');
+    if (!g) return;
+    const who = document.getElementById('journeyWho');
+    const order = ['add', 'equiv', 'compare', 'lowest', 'unit', 'equal', 'frac']; // bottom-up
+    const nodeOf = (id) => g.querySelector('.jn[data-n="' + id + '"]');
+    const clearAll = () => g.querySelectorAll('.jn').forEach((n) => n.classList.remove('cleared', 'taught'));
+
+    const setWho = (name, desc, color) => {
+      if (!who) return;
+      who.innerHTML = '<span style="color:' + color + ';">' + name + '</span>'
+        + '<span style="font-family:var(--mono); font-weight:500; font-size:.6rem; letter-spacing:.07em; text-transform:uppercase; color:var(--muted); margin-left:.6rem; vertical-align:middle;">' + desc + '</span>';
+    };
+
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setWho('Every student', 'their own path', 'var(--ink)');
+      order.forEach((id) => { const n = nodeOf(id); if (n) n.classList.add('cleared'); });
+      return;
+    }
+
+    const runs = [
+      { name: 'Aarav', desc: 'already fluent', color: 'var(--teal)', gaps: [] },
+      { name: 'Meera', desc: 'starting from scratch', color: 'var(--amber)', gaps: ['add', 'equiv', 'compare', 'unit', 'equal'] },
+    ];
+    let ri = 0, timers = [];
+    function play() {
+      timers.forEach(clearTimeout); timers = [];
+      const run = runs[ri % runs.length];
+      setWho(run.name, run.desc, run.color);
+      clearAll();
+      let t = 450;
+      order.forEach((id) => {
+        const gap = run.gaps.indexOf(id) !== -1;
+        const step = gap ? 820 : 300;
+        timers.push(setTimeout(() => { const n = nodeOf(id); if (n) n.classList.add(gap ? 'taught' : 'cleared'); }, t));
+        t += step;
+      });
+      ri++;
+      timers.push(setTimeout(play, t + 1300));
+    }
+    play();
+  })();
+</script>
+</body>
+</html>
