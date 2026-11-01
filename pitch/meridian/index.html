@@ -496,10 +496,10 @@
   .cards.five .card .ct { font-size: clamp(1rem, 1.3vw, 1.18rem); }
 
   /* comparison table: question banks vs WizzBox */
-  .vs { display:grid; grid-template-columns: .9fr 1.2fr 1.3fr; max-width:1180px; margin-top: clamp(1.6rem,3.5vh,2.6rem); border-top:1px solid rgba(246,237,226,.16); }
-  .vs > div { padding: .9rem 1.1rem; border-bottom:1px solid rgba(246,237,226,.12); font-size: clamp(.88rem,1.12vw,1.02rem); line-height:1.42; color: rgba(246,237,226,.6); }
+  .vs { display:grid; grid-template-columns: .9fr 1.2fr 1.3fr; max-width:1180px; margin-top: clamp(1.2rem,2.8vh,2.4rem); border-top:1px solid rgba(246,237,226,.16); }
+  .vs > div { padding: .72rem 1.1rem; border-bottom:1px solid rgba(246,237,226,.12); font-size: clamp(.88rem,1.12vw,1.02rem); line-height:1.42; color: rgba(246,237,226,.6); }
   .vs .vh { font-family:var(--mono); font-size:.68rem; letter-spacing:.14em; text-transform:uppercase; color: rgba(246,237,226,.5); }
-  .vs .vk { font-family:var(--mono); font-size:.68rem; letter-spacing:.1em; text-transform:uppercase; color: var(--teal-br); padding-top:1.05rem; }
+  .vs .vk { font-family:var(--mono); font-size:.68rem; letter-spacing:.1em; text-transform:uppercase; color: var(--teal-br); padding-top:.88rem; }
   .vs .vw { color: var(--paper); background: rgba(14,165,233,.09); }
   .vs .vh.vw { color: var(--sky); }
 
@@ -535,8 +535,44 @@
 
   .s-ink .stat .sl { color: rgba(246,237,226,.68); }
 
+  /* the outcome promise: cover seal + slide 2 */
+  .cover-beats { max-width:none; color: var(--paper); font-family: var(--serif); font-size: clamp(1.2rem, 1.9vw, 1.6rem); line-height:1.4; letter-spacing:-.01em; }
+  .cover-beats .em { font-weight:500; color: var(--paper); }
+  /* pinned to the cover's bottom-right corner, clear of the nav pill (the slide is the positioned ancestor) */
+  .seal-wrap { position:absolute; z-index:2; bottom: clamp(6rem, 13vh, 8.5rem); right: clamp(3.5rem, 5vw, 5.5rem); }
+  .seal { display:block; width: clamp(150px, 13vw, 200px); height:auto; overflow:visible; transform: rotate(-9deg);
+          filter: drop-shadow(0 0 22px rgba(14,165,233,.22)); }
+
+  .promise-viz { width:100%; max-width:470px; justify-self:end; }
+  .pv-note { margin-top:.7rem; font-size:.78rem; line-height:1.4; color:var(--muted); }
+
+  /* exam readiness: four rising steps */
+  .ladder { display:grid; grid-template-columns:repeat(4,1fr); gap:clamp(1rem,2.4vw,2.4rem); max-width:1180px; margin-top:clamp(1.8rem,4vh,3rem); }
+  .ladder .rung-track { height:clamp(96px,17vh,150px); display:flex; align-items:flex-end; border-bottom:1px solid rgba(246,237,226,.18); margin-bottom:1.1rem; }
+  .ladder .rung-bar { width:100%; height:var(--h); border-radius:10px 10px 0 0; position:relative;
+                      background:linear-gradient(180deg, rgba(14,165,233,.5), rgba(14,165,233,.06));
+                      border:1px solid rgba(14,165,233,.4); border-bottom:0; }
+  .ladder .rung-bar span { position:absolute; top:.55rem; left:.7rem; font-family:var(--mono); font-size:.7rem; letter-spacing:.1em; color:var(--paper); }
+  .ladder > div:last-child .rung-bar { background:linear-gradient(180deg, rgba(61,181,167,.75), rgba(61,181,167,.1)); border-color:rgba(61,181,167,.7);
+                                       box-shadow:0 0 34px -6px rgba(61,181,167,.55); }
+  .ladder .rk { font-family:var(--mono); font-size:.68rem; letter-spacing:.16em; text-transform:uppercase; color:var(--sky); margin-bottom:.45rem; }
+  .ladder > div:last-child .rk { color:var(--teal-br); }
+  .ladder .rt { font-family:var(--serif); font-size:clamp(1.05rem,1.5vw,1.32rem); font-weight:500; color:var(--paper); margin-bottom:.35rem; letter-spacing:-.01em; }
+  .ladder .rb { font-size:clamp(.86rem,1.08vw,.98rem); line-height:1.45; color:rgba(246,237,226,.62); }
+
+  .terms { display:grid; grid-template-columns:repeat(3,1fr); gap:clamp(1rem,2.4vw,2.4rem); max-width:1180px; margin-top:clamp(1.6rem,3.5vh,2.6rem); }
+  .terms > div { border-top:1px solid var(--ink); padding-top:.85rem; }
+  .terms b { display:block; font-family:var(--mono); font-size:.66rem; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--sky-deep); margin-bottom:.45rem; }
+  .terms .tt2 { font-family:var(--serif); font-size:clamp(1.05rem,1.45vw,1.28rem); font-weight:500; letter-spacing:-.01em; color:var(--ink); margin-bottom:.3rem; }
+  .terms p { font-size:clamp(.84rem,1.05vw,.96rem); color:var(--muted); line-height:1.45; }
+
   @media (max-width: 1100px) { .cards.five { grid-template-columns: repeat(3, 1fr); } }
   @media (max-width: 860px) {
+    .ladder { grid-template-columns: 1fr 1fr; }
+    .seal-wrap { position:static; margin-top: 1.4rem; }
+    .seal { width: 136px; }
+    .promise-viz { justify-self:center; }
+    .terms { grid-template-columns: 1fr; }
     .cards.two, .cards.five, .price-strip { grid-template-columns: 1fr 1fr; }
     .vs { grid-template-columns: 1fr 1fr; }
     .vs .vk { grid-column: 1 / -1; border-bottom:0; padding-bottom:0; }
@@ -575,16 +611,54 @@
       <circle class="node pulse" cx="256" cy="20" r="14" style="animation-delay:.2s"/>
     </svg>
 
-    <div class="stack" style="max-width: 60ch;">
+    <div class="stack" style="max-width: 64ch;">
       <div class="kicker" data-r style="--d:0" id="cover-kicker">A proposal for your school</div>
-      <h1 class="display" data-r style="--d:1">A personal tutor for <span class="accent">every student in the class.</span></h1>
-      <p class="lead" data-r style="--d:2; color: rgba(246,237,226,.74);">
-        <span class="em">Others test. WizzBox teaches.</span> When a student gets a question wrong, WizzBox<span style="color:var(--sky)">.AI</span>
-        finds out why, teaches that one idea one-on-one, and proves it landed on fresh questions.
-        Maths, Physics and Chemistry, built to CBSE, ICSE, IB and Cambridge.
+      <h1 class="display" data-r style="--d:1">A personal tutor for <span class="accent">every student.</span></h1>
+      <!-- four beats, each a step brighter, landing on the exam -->
+      <p class="lead cover-beats" data-r style="--d:2;">
+        <span style="opacity:.5">Every gap found.</span> <span style="opacity:.68">Every gap taught.</span><br>
+        <span style="opacity:.85">Every strategy mastered.</span> <span class="em">Every exam aced.</span>
       </p>
-      <div class="rule" data-r style="--d:3; margin-top:1.8rem; max-width:60ch;"></div>
-      <div class="foot" data-r style="--d:4; margin-top:1.4rem;">
+      <!-- the outcome promise, as a seal: soft glow behind, a faint displacement for an inked, organic edge -->
+      <div class="seal-wrap" data-r style="--d:3;">
+        <svg class="seal" viewBox="0 0 200 200" fill="none" role="img" aria-label="Our promise: Results, or it's free.">
+          <defs>
+            <filter id="sealGlow" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur stdDeviation="10"/>
+            </filter>
+            <filter id="sealInk" x="-5%" y="-5%" width="110%" height="110%">
+              <feTurbulence type="fractalNoise" baseFrequency="1.1" numOctaves="2" seed="7" result="grain"/>
+              <feDisplacementMap in="SourceGraphic" in2="grain" scale="1.4" xChannelSelector="R" yChannelSelector="G"/>
+            </filter>
+            <radialGradient id="sealDisc" cx="50%" cy="42%" r="60%">
+              <stop offset="0" stop-color="#0ea5e9" stop-opacity=".2"/>
+              <stop offset="1" stop-color="#0ea5e9" stop-opacity=".05"/>
+            </radialGradient>
+            <path id="sealArc" d="M100,100 m-75,0 a75,75 0 1,1 150,0 a75,75 0 1,1 -150,0"/>
+          </defs>
+
+          <!-- glow -->
+          <circle cx="100" cy="100" r="86" fill="var(--sky)" opacity=".2" filter="url(#sealGlow)"/>
+          <!-- opaque backing, so the cover's graph motif doesn't show through -->
+          <circle cx="100" cy="100" r="94" fill="#0f172a"/>
+
+          <g filter="url(#sealInk)">
+            <circle cx="100" cy="100" r="94" fill="url(#sealDisc)" stroke="var(--sky)" stroke-opacity=".7" stroke-width="1.3"/>
+            <circle cx="100" cy="100" r="88.5" stroke="var(--sky)" stroke-opacity=".55" stroke-width="1.8" stroke-linecap="round" stroke-dasharray="0.1 4.2"/>
+            <text font-family="var(--mono)" font-size="10.5" font-weight="500" fill="var(--sky)">
+              <textPath href="#sealArc" textLength="471" lengthAdjust="spacing">OUR PROMISE • OUR PROMISE • OUR PROMISE •&#160;</textPath>
+            </text>
+            <circle cx="100" cy="100" r="64" stroke="var(--sky)" stroke-opacity=".7" stroke-width="1"/>
+
+            <path d="M100,72 V56 M94,62 L100,56 L106,62" stroke="var(--sky)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+            <text x="100" y="101" text-anchor="middle" font-family="var(--serif)" font-size="27" font-weight="500" letter-spacing="-.4" fill="var(--paper)">Results,</text>
+            <text x="100" y="126" text-anchor="middle" font-family="var(--serif)" font-size="19.5" font-style="italic" font-weight="500" fill="var(--sky)">or it's free.</text>
+            <line x1="90" y1="140" x2="110" y2="140" stroke="var(--sky)" stroke-opacity=".5" stroke-width="1"/>
+          </g>
+        </svg>
+      </div>
+      <div class="rule" data-r style="--d:4; margin-top:1.5rem; max-width:64ch;"></div>
+      <div class="foot" data-r style="--d:5; margin-top:1.4rem;">
         <span id="cover-presenter" class="em">WizzBox.AI</span>
         <span style="opacity:.4">/</span>
         <span>dev@wizzbox.ai</span>
@@ -592,7 +666,91 @@
     </div>
   </section>
 
-  <!-- ============ 2 · THE PROBLEM ============ -->
+  <!-- ============ 2 · THE PROMISE ============ -->
+  <!-- Deliberately no numbers here: the pitch. Exact prices and thresholds live on the offer slide (19). -->
+  <section class="deck-slide s-paper-2">
+    <div class="two-col" style="align-items:center; max-width:1180px;">
+      <div class="stack">
+        <div class="kicker" data-r style="--d:0">Our promise</div>
+        <h2 class="display" data-r style="--d:1">Results, <span class="accent" style="white-space:nowrap">or it's free.</span></h2>
+        <p class="lead" data-r style="--d:2">
+          You only pay for <span class="em">the improvement.</span>
+        </p>
+      </div>
+
+      <!-- baseline distribution vs the bar we commit to (illustrative) -->
+      <div class="side-visual promise-viz" data-r style="--d:3;">
+        <div class="mock">
+          <div class="mock-head" style="margin-bottom:.6rem; gap:.4rem 1rem; flex-wrap:wrap;">
+            <span class="mock-title">How it's measured</span>
+            <span style="font-family:var(--mono); font-size:.66rem; letter-spacing:.12em; color:var(--sky-deep);">Class average · your test</span>
+          </div>
+          <!-- Illustrative and deliberately exaggerated: the point is the lift, not the size of it.
+               Before: mean x=166.8, sd 13. After: mean x=280.8, sd 11, same area. Axis at y=196. -->
+          <svg viewBox="0 0 440 226" width="100%" style="display:block;" fill="none" aria-hidden="true">
+            <defs>
+              <linearGradient id="barFill" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="var(--teal)" stop-opacity=".32"/>
+                <stop offset="1" stop-color="var(--sky)" stop-opacity=".04"/>
+              </linearGradient>
+            </defs>
+
+            <!-- before -->
+            <path d="M30.0,193.3 L37.6,191.9 L45.2,190.0 L52.8,187.3 L60.4,183.7 L68.0,179.1 L75.6,173.3 L83.2,166.1 L90.8,157.7 L98.4,148.1 L106.0,137.4 L113.6,126.0 L121.2,114.4 L128.8,103.0 L136.4,92.6 L144.0,83.6 L151.6,76.8 L159.2,72.5 L166.8,71.0 L174.4,72.5 L182.0,76.8 L189.6,83.6 L197.2,92.6 L204.8,103.0 L212.4,114.4 L220.0,126.0 L227.6,137.4 L235.2,148.1 L242.8,157.7 L250.4,166.1 L258.0,173.3 L265.6,179.1 L273.2,183.7 L280.8,187.3 L288.4,190.0 L296.0,191.9 L303.6,193.3 L311.2,194.3 L318.8,194.9 L326.4,195.3 L334.0,195.6 L341.6,195.8 L349.2,195.9 L356.8,195.9 L364.4,196.0 L410.0,196.0 L30,196 Z" fill="var(--ink)" opacity=".05"/>
+            <path d="M30.0,193.3 L37.6,191.9 L45.2,190.0 L52.8,187.3 L60.4,183.7 L68.0,179.1 L75.6,173.3 L83.2,166.1 L90.8,157.7 L98.4,148.1 L106.0,137.4 L113.6,126.0 L121.2,114.4 L128.8,103.0 L136.4,92.6 L144.0,83.6 L151.6,76.8 L159.2,72.5 L166.8,71.0 L174.4,72.5 L182.0,76.8 L189.6,83.6 L197.2,92.6 L204.8,103.0 L212.4,114.4 L220.0,126.0 L227.6,137.4 L235.2,148.1 L242.8,157.7 L250.4,166.1 L258.0,173.3 L265.6,179.1 L273.2,183.7 L280.8,187.3 L288.4,190.0 L296.0,191.9 L303.6,193.3 L311.2,194.3 L318.8,194.9 L326.4,195.3 L334.0,195.6 L341.6,195.8 L349.2,195.9 L356.8,195.9 L364.4,196.0 L410.0,196.0" stroke="var(--muted)" stroke-opacity=".6" stroke-width="1.5" stroke-linejoin="round"/>
+
+            <!-- after -->
+            <path d="M30.0,196.0 L113.6,196.0 L121.2,195.9 L128.8,195.8 L136.4,195.6 L144.0,195.3 L151.6,194.8 L159.2,193.9 L166.8,192.4 L174.4,190.2 L182.0,187.0 L189.6,182.3 L197.2,176.0 L204.8,167.7 L212.4,157.3 L220.0,144.7 L227.6,130.3 L235.2,114.5 L242.8,98.3 L250.4,82.6 L258.0,68.7 L265.6,57.7 L273.2,50.7 L280.8,48.3 L288.4,50.7 L296.0,57.7 L303.6,68.7 L311.2,82.6 L318.8,98.3 L326.4,114.5 L334.0,130.3 L341.6,144.7 L349.2,157.3 L356.8,167.7 L364.4,176.0 L372.0,182.3 L379.6,187.0 L387.2,190.2 L394.8,192.4 L402.4,193.9 L410.0,194.8 L410,196 L30,196 Z" fill="url(#barFill)"/>
+            <path d="M30.0,196.0 L113.6,196.0 L121.2,195.9 L128.8,195.8 L136.4,195.6 L144.0,195.3 L151.6,194.8 L159.2,193.9 L166.8,192.4 L174.4,190.2 L182.0,187.0 L189.6,182.3 L197.2,176.0 L204.8,167.7 L212.4,157.3 L220.0,144.7 L227.6,130.3 L235.2,114.5 L242.8,98.3 L250.4,82.6 L258.0,68.7 L265.6,57.7 L273.2,50.7 L280.8,48.3 L288.4,50.7 L296.0,57.7 L303.6,68.7 L311.2,82.6 L318.8,98.3 L326.4,114.5 L334.0,130.3 L341.6,144.7 L349.2,157.3 L356.8,167.7 L364.4,176.0 L372.0,182.3 L379.6,187.0 L387.2,190.2 L394.8,192.4 L402.4,193.9 L410.0,194.8" stroke="var(--teal)" stroke-width="2.2" stroke-linejoin="round"/>
+
+            <!-- class averages: before (dashed) and after (solid) -->
+            <line x1="166.8" y1="196" x2="166.8" y2="34" stroke="var(--muted)" stroke-width="1.2" stroke-dasharray="3 3"/>
+            <line x1="280.8" y1="196" x2="280.8" y2="34" stroke="var(--teal)" stroke-width="1.6"/>
+            <circle cx="166.8" cy="71" r="3.2" fill="var(--paper-2)" stroke="var(--muted)" stroke-width="1.4"/>
+            <circle cx="280.8" cy="48.3" r="3.8" fill="var(--teal)"/>
+
+            <!-- the lift -->
+            <line x1="170" y1="28" x2="274" y2="28" stroke="var(--ink)" stroke-width="1.3"/>
+            <path d="M267,23.5 L275,28 L267,32.5" stroke="var(--ink)" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+            <text x="223.8" y="16" text-anchor="middle" font-family="var(--serif)" font-size="14.5" font-style="italic" font-weight="500" fill="var(--ink)">the rise you pay for</text>
+
+            <!-- curve labels -->
+            <text x="132" y="74" text-anchor="end" font-family="var(--mono)" font-size="8.5" letter-spacing="1.4" fill="var(--muted)">BEFORE</text>
+            <text x="132" y="89" text-anchor="end" font-family="var(--sans)" font-size="12" font-weight="600" fill="var(--ink)">Your class today</text>
+            <text x="318" y="62" font-family="var(--mono)" font-size="8.5" letter-spacing="1.4" fill="var(--teal)">AFTER</text>
+            <text x="318" y="77" font-family="var(--sans)" font-size="12" font-weight="600" fill="var(--ink)">With WizzBox</text>
+
+            <!-- axis -->
+            <line x1="30" y1="196" x2="410" y2="196" stroke="var(--ink)" stroke-opacity=".35" stroke-width="1"/>
+            <text x="30"  y="214" text-anchor="start" font-family="var(--mono)" font-size="8" letter-spacing="1" fill="var(--muted)">LOWER</text>
+            <text x="410" y="214" text-anchor="end"   font-family="var(--mono)" font-size="8" letter-spacing="1" fill="var(--muted)">HIGHER</text>
+            <text x="166.8" y="214" text-anchor="middle" font-family="var(--mono)" font-size="8.5" letter-spacing="1.2" fill="var(--amber)">NO RISE · FREE</text>
+            <text x="280.8" y="214" text-anchor="middle" font-family="var(--mono)" font-size="8.5" letter-spacing="1.2" fill="var(--teal)" font-weight="600">YOU PAY</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="terms" data-r style="--d:4;">
+      <div>
+        <b>01 · Your test</b>
+        <div class="tt2">Your teachers set it and mark it</div>
+        <p>A test before, on chapters already taught. A matched paper with new questions after.</p>
+      </div>
+      <div>
+        <b>02 · Your students</b>
+        <div class="tt2">Every regular user counts</div>
+        <p>The average covers every student who uses WizzBox regularly. No hand-picking.</p>
+      </div>
+      <div>
+        <b>03 · Your bill</b>
+        <div class="tt2">Nothing upfront</div>
+        <p>You're billed after the results are in. No improvement, no bill.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 3 · THE PROBLEM ============ -->
   <section class="deck-slide s-paper">
 
     <div class="two-col" style="align-items:center; max-width:1180px;">
@@ -791,6 +949,10 @@
       <div class="vk">Measured on</div>
       <div>Questions attempted</div>
       <div class="vw">Concepts actually learned</div>
+
+      <div class="vk">You pay for</div>
+      <div>Logins, upfront, whether marks move or not</div>
+      <div class="vw">Results, or it's free</div>
     </div>
   </section>
 
@@ -1062,7 +1224,44 @@
     </div>
   </section>
 
-  <!-- ============ 10 · PROOF · FROM A LIVE CLASSROOM ============ -->
+  <!-- ============ 11 · BUILT FOR THE EXAM ============ -->
+  <section class="deck-slide s-ink">
+    <div class="stack" style="max-width: 60ch;">
+      <div class="kicker" data-r style="--d:0">Built for the exam</div>
+      <h2 class="display sm" data-r style="--d:1">From knowing it <span class="accent">to acing it.</span></h2>
+      <p class="lead" data-r style="--d:2; color: rgba(246,237,226,.74);">
+        Most marks are lost after the idea is learned. WizzBox trains every step between the chapter and the paper.
+      </p>
+    </div>
+    <div class="ladder" data-r style="--d:3;">
+      <div>
+        <div class="rung-track"><div class="rung-bar" style="--h:22%;"><span>01</span></div></div>
+        <div class="rk">Understanding</div>
+        <div class="rt">Know the idea</div>
+        <div class="rb">Why it works, not just the steps to follow.</div>
+      </div>
+      <div>
+        <div class="rung-track"><div class="rung-bar" style="--h:48%;"><span>02</span></div></div>
+        <div class="rk">Recognition</div>
+        <div class="rt">Spot it in any form</div>
+        <div class="rb">See which idea a case study or word problem is really asking for.</div>
+      </div>
+      <div>
+        <div class="rung-track"><div class="rung-bar" style="--h:74%;"><span>03</span></div></div>
+        <div class="rk">Execution</div>
+        <div class="rt">Get every step right</div>
+        <div class="rb">Clean working, in the form the marking scheme rewards. No careless slips.</div>
+      </div>
+      <div>
+        <div class="rung-track"><div class="rung-bar" style="--h:100%;"><span>04</span></div></div>
+        <div class="rk">Strategy</div>
+        <div class="rt">Win the paper</div>
+        <div class="rb">Which question first, how long on each, and where the marks are.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 12 · PROOF · FROM A LIVE CLASSROOM ============ -->
   <section class="deck-slide s-paper">
     <div class="two-col" style="align-items:center;">
       <div class="stack">
@@ -1337,7 +1536,7 @@
         <div class="tdot">✓</div>
         <div class="twk">Week 8</div>
         <div class="tt">Your end test, your verdict</div>
-        <div class="tb">A matched test with new questions, marked by your teachers. You see the gain, student by student.</div>
+        <div class="tb">A matched test with new questions, marked by your teachers. +5 points for ₹500. No improvement, it's free.</div>
       </div>
     </div>
     <p class="lead" data-r style="--d:3; margin-top: clamp(1.6rem,3vh,2.4rem);">
@@ -1354,12 +1553,12 @@
     </div>
     <div class="cards two" data-r style="--d:2; margin-top: clamp(1.4rem,3vh,2.2rem); max-width: 1180px;">
       <div class="card price">
-        <span class="cn">OPTION A · PILOT WITH A GUARANTEE</span>
+        <span class="cn">OPTION A · PILOT ON RESULTS</span>
         <div class="ct">Founding pilot</div>
-        <div class="pa">₹750<small>per student, 8 weeks</small></div>
+        <div class="pa">₹500<small>per student, 8 weeks</small></div>
         <ul>
-          <li>Full refund if students haven't closed at least 60% of the gaps WizzBox found, checked on fresh questions.</li>
-          <li>Every rupee credited to the annual plan.</li>
+          <li>For a 5-point rise in your class average, on your own end test.</li>
+          <li>No improvement, it's free. Nothing upfront. Every rupee credited to the annual plan.</li>
         </ul>
       </div>
       <div class="card price featured">
@@ -1393,13 +1592,14 @@
       <circle class="node pulse" cx="220" cy="110" r="9" style="animation-delay:.7s"/>
       <circle class="node pulse" cx="350" cy="90" r="7" style="animation-delay:1.3s"/>
     </svg>
-    <div class="stack" style="max-width: 56ch;">
-      <div class="kicker" data-r style="--d:0">Others test. WizzBox teaches.</div>
+    <div class="stack" style="max-width: 62ch;">
+      <div class="kicker" data-r style="--d:0">A personal tutor for every student</div>
       <h2 class="display" data-r style="--d:1">Teach every student like they're <span class="accent">your only student.</span></h2>
-      <p class="lead" data-r style="--d:2; color: rgba(246,237,226,.78);">
-        Start with Class 10 at one campus this month. You'll see every student's gaps in week one, and judge the result on your own test.
+      <p class="lead" data-r style="--d:2; color: rgba(246,237,226,.78); max-width: 52ch;">
+        Start with Class 10 at one campus this month. Every student's gaps on screen in week one.
+        Results on your own test, <span style="white-space:nowrap">or it's free.</span>
       </p>
-      <div class="rule" data-r style="--d:3; margin-top:1.6rem; max-width:56ch;"></div>
+      <div class="rule" data-r style="--d:3; margin-top:1.6rem; max-width:62ch;"></div>
       <div class="foot" data-r style="--d:4; margin-top:1.4rem; font-size:.84rem;">
         <span class="em" style="font-size:1rem;">WizzBox<span style="color:var(--sky)">.AI</span></span>
         <span style="opacity:.4">/</span>
@@ -1443,7 +1643,6 @@
   document.getElementById('cover-presenter').textContent = PRESENTER;
   document.title = "WizzBox.AI: A Proposal for " + SCHOOL_NAME;
   document.querySelectorAll('.school-name').forEach((el) => { el.textContent = SCHOOL_NAME; });
-
   const slides = Array.from(document.querySelectorAll('.deck-slide'));
   const total  = slides.length;
   let current  = 0;
