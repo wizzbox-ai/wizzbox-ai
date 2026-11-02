@@ -1,6 +1,6 @@
-# pitch_nov2: what changed from /pitch
+# pitch/nov2: what changed from /pitch
 
-Built 1 November 2026 for the Meridian School, Hyderabad meeting. The original deck in `/pitch` is untouched. Open `index.html` in a browser (arrow keys to move, F for full screen, Cmd/Ctrl+P to save as PDF).
+Built 1 November 2026 as a school-agnostic version of the deck. The original deck in `/pitch` is untouched. Open `index.html` in a browser (arrow keys to move, F for full screen, Cmd/Ctrl+P to save as PDF).
 
 ## Positioning
 - The lead message is now **one-on-one teaching, not testing**. Cover: "A personal tutor for every student." The cover and closing no longer say "Others test. WizzBox teaches.": state what WizzBox does, don't name the alternatives.
@@ -40,8 +40,8 @@ Slide numbers are for the current 20-slide deck.
 - **Curriculum:** Maths, Physics and Chemistry; CBSE, ICSE, IB and Cambridge; Grades 8–10 ready now, 4–7 being built (was Maths and Science, Grades 6–12).
 - **Getting started:** 8 weeks, Class 10, finished before preboards. The school sets and marks its own baseline and end tests (was a 4-week pilot).
 - **How it fits:** "No extra period. It's the homework they already do", with 20–30 minutes a day and one 40-minute training.
-- **Problem slide:** 30 students instead of 40 (Meridian caps classes at about 30).
-- `SCHOOL_NAME` is set to "Meridian School" in the script at the bottom.
+- **Problem slide:** 30 students instead of 40.
+- `SCHOOL_NAME` in the script at the bottom is empty, so the deck says "your school". Set it to personalise the cover kicker, the page title and slide 16's kicker for a meeting.
 
 ## Check before presenting
 - **Prices on slide 19** are proposals, not agreed numbers. They're plain text under the `EDIT PRICES HERE` comment. The pitch numbers (₹500, +5 points) appear only on slide 18 (week 8) and slide 19 (Option A).

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>WizzBox.AI: A Proposal for Meridian School</title>
+<title>WizzBox.AI: A Proposal for Your School</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Fraunces:opsz,wght@9..144,340;9..144,420;9..144,500;9..144,600&family=Hanken+Grotesk:wght@400;500;600;700&family=Spline+Sans+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
@@ -1634,15 +1634,17 @@
   /* ============================================================
      EDIT THESE TWO LINES to personalise the deck per school:
      ============================================================ */
-  const SCHOOL_NAME = "Meridian School";          // e.g. "Springdale Public School"
+  const SCHOOL_NAME = "";          // e.g. "Springdale Public School"; leave empty for "your school"
   const PRESENTER   = "The WizzBox.AI Team";  // your name / team
   /* ============================================================ */
 
-  // Inject config
-  document.getElementById('cover-kicker').textContent = "A proposal for " + SCHOOL_NAME;
+  // Inject config (with no school name, the deck keeps its generic "your school" wording)
   document.getElementById('cover-presenter').textContent = PRESENTER;
-  document.title = "WizzBox.AI: A Proposal for " + SCHOOL_NAME;
-  document.querySelectorAll('.school-name').forEach((el) => { el.textContent = SCHOOL_NAME; });
+  if (SCHOOL_NAME) {
+    document.getElementById('cover-kicker').textContent = "A proposal for " + SCHOOL_NAME;
+    document.title = "WizzBox.AI: A Proposal for " + SCHOOL_NAME;
+    document.querySelectorAll('.school-name').forEach((el) => { el.textContent = SCHOOL_NAME; });
+  }
   const slides = Array.from(document.querySelectorAll('.deck-slide'));
   const total  = slides.length;
   let current  = 0;
