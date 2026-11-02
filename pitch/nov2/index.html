@@ -567,7 +567,25 @@
   .terms p { font-size:clamp(.84rem,1.05vw,.96rem); color:var(--muted); line-height:1.45; }
 
   @media (max-width: 1100px) { .cards.five { grid-template-columns: repeat(3, 1fr); } }
+  /* How it fits: the two ways to meet the usage bar, side by side */
+  .fit-opts { display:grid; grid-template-columns: 1fr auto 1fr; gap: clamp(.8rem,1.6vw,1.4rem); max-width:1180px; margin-top: clamp(1.4rem,3vh,2.2rem); }
+  .fit-opts .card { display:flex; flex-direction:column; }
+  .fit-top { display:flex; align-items:center; justify-content:space-between; gap:1rem; }
+  .fit-top .cn { margin-bottom:0; }
+  .fit-icon { flex:none; width:42px; height:42px; border-radius:12px; display:grid; place-items:center; background: rgba(31,148,136,.1); color: var(--teal); }
+  .fit-opts .card + .fit-or + .card .fit-icon { background: rgba(14,165,233,.1); color: var(--sky-deep); }
+  .fit-opts .ct { margin: .9rem 0 .1rem; }
+  .fit-amt { font-family: var(--serif); font-weight:500; font-size: clamp(1.7rem,2.8vw,2.4rem); line-height:1; letter-spacing:-.02em; color: var(--ink); margin: .4rem 0 .7rem; }
+  .fit-amt small { font-family: var(--sans); font-size: clamp(.8rem,1vw,.92rem); font-weight:500; color: var(--muted); letter-spacing:0; margin-left:.35rem; }
+  .fit-or { align-self:center; font-family: var(--serif); font-style:italic; font-size: clamp(1.2rem,1.8vw,1.6rem); color: var(--muted); }
+  .checks.four { grid-template-columns: repeat(4,1fr); margin-top: clamp(1.4rem,3vh,2.2rem); }
+  @media (max-width: 1100px) { .checks.four { grid-template-columns: repeat(2,1fr); } }
+  .nw-wide { white-space: nowrap; }   /* keep a headline line whole on wide screens, let it wrap on phones */
+
   @media (max-width: 860px) {
+    .nw-wide { white-space: normal; }
+    .fit-opts { grid-template-columns: 1fr; }
+    .fit-or { justify-self:center; }
     .ladder { grid-template-columns: 1fr 1fr; }
     .seal-wrap { position:static; margin-top: 1.4rem; }
     .seal { width: 136px; }
@@ -579,7 +597,7 @@
     .vs .vblank { display:none; }
   }
   @media (max-width: 560px) {
-    .cards.two, .cards.five, .price-strip { grid-template-columns: 1fr; }
+    .cards.two, .cards.five, .price-strip, .checks.four { grid-template-columns: 1fr; }
   }
 </style>
 </head>
@@ -621,7 +639,7 @@
       </p>
       <!-- the outcome promise, as a seal: soft glow behind, a faint displacement for an inked, organic edge -->
       <div class="seal-wrap" data-r style="--d:3;">
-        <svg class="seal" viewBox="0 0 200 200" fill="none" role="img" aria-label="Our promise: Results, or it's free.">
+        <svg class="seal" viewBox="0 0 200 200" fill="none" role="img" aria-label="Our promise: Use it, and it's free.">
           <defs>
             <filter id="sealGlow" x="-50%" y="-50%" width="200%" height="200%">
               <feGaussianBlur stdDeviation="10"/>
@@ -651,8 +669,8 @@
             <circle cx="100" cy="100" r="64" stroke="var(--sky)" stroke-opacity=".7" stroke-width="1"/>
 
             <path d="M100,72 V56 M94,62 L100,56 L106,62" stroke="var(--sky)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-            <text x="100" y="101" text-anchor="middle" font-family="var(--serif)" font-size="27" font-weight="500" letter-spacing="-.4" fill="var(--paper)">Results,</text>
-            <text x="100" y="126" text-anchor="middle" font-family="var(--serif)" font-size="19.5" font-style="italic" font-weight="500" fill="var(--sky)">or it's free.</text>
+            <text x="100" y="101" text-anchor="middle" font-family="var(--serif)" font-size="27" font-weight="500" letter-spacing="-.4" fill="var(--paper)">Use it,</text>
+            <text x="100" y="126" text-anchor="middle" font-family="var(--serif)" font-size="19.5" font-style="italic" font-weight="500" fill="var(--sky)">and it's free.</text>
             <line x1="90" y1="140" x2="110" y2="140" stroke="var(--sky)" stroke-opacity=".5" stroke-width="1"/>
           </g>
         </svg>
@@ -672,9 +690,9 @@
     <div class="two-col" style="align-items:center; max-width:1180px;">
       <div class="stack">
         <div class="kicker" data-r style="--d:0">Our promise</div>
-        <h2 class="display" data-r style="--d:1">Results, <span class="accent" style="white-space:nowrap">or it's free.</span></h2>
+        <h2 class="display" data-r style="--d:1">Use it, <span class="accent" style="white-space:nowrap">and it's free.</span></h2>
         <p class="lead" data-r style="--d:2">
-          You only pay for <span class="em">the improvement.</span>
+          And when marks rise, <span class="em">next year costs less.</span>
         </p>
       </div>
 
@@ -712,7 +730,7 @@
             <!-- the lift -->
             <line x1="170" y1="28" x2="274" y2="28" stroke="var(--ink)" stroke-width="1.3"/>
             <path d="M267,23.5 L275,28 L267,32.5" stroke="var(--ink)" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
-            <text x="223.8" y="16" text-anchor="middle" font-family="var(--serif)" font-size="14.5" font-style="italic" font-weight="500" fill="var(--ink)">the rise you pay for</text>
+            <text x="223.8" y="16" text-anchor="middle" font-family="var(--serif)" font-size="14.5" font-style="italic" font-weight="500" fill="var(--ink)">the rise that lowers your price</text>
 
             <!-- curve labels -->
             <text x="132" y="74" text-anchor="end" font-family="var(--mono)" font-size="8.5" letter-spacing="1.4" fill="var(--muted)">BEFORE</text>
@@ -724,8 +742,8 @@
             <line x1="30" y1="196" x2="410" y2="196" stroke="var(--ink)" stroke-opacity=".35" stroke-width="1"/>
             <text x="30"  y="214" text-anchor="start" font-family="var(--mono)" font-size="8" letter-spacing="1" fill="var(--muted)">LOWER</text>
             <text x="410" y="214" text-anchor="end"   font-family="var(--mono)" font-size="8" letter-spacing="1" fill="var(--muted)">HIGHER</text>
-            <text x="166.8" y="214" text-anchor="middle" font-family="var(--mono)" font-size="8.5" letter-spacing="1.2" fill="var(--amber)">NO RISE · FREE</text>
-            <text x="280.8" y="214" text-anchor="middle" font-family="var(--mono)" font-size="8.5" letter-spacing="1.2" fill="var(--teal)" font-weight="600">YOU PAY</text>
+            <text x="166.8" y="214" text-anchor="middle" font-family="var(--mono)" font-size="8.5" letter-spacing="1.2" fill="var(--muted)">WEEK 0</text>
+            <text x="280.8" y="214" text-anchor="middle" font-family="var(--mono)" font-size="8.5" letter-spacing="1.2" fill="var(--teal)" font-weight="600">WEEK 8</text>
           </svg>
         </div>
       </div>
@@ -738,14 +756,14 @@
         <p>A test before, on chapters already taught. A matched paper with new questions after.</p>
       </div>
       <div>
-        <b>02 · Your students</b>
-        <div class="tt2">Every regular user counts</div>
-        <p>The average covers every student who uses WizzBox regularly. No hand-picking.</p>
+        <b>02 · Your part</b>
+        <div class="tt2">Three periods a week</div>
+        <p>In a study period you already have, or as homework. Whichever suits your timetable.</p>
       </div>
       <div>
-        <b>03 · Your bill</b>
-        <div class="tt2">Nothing upfront</div>
-        <p>You're billed after the results are in. No improvement, no bill.</p>
+        <b>03 · Your price</b>
+        <div class="tt2">Better results, lower price</div>
+        <p>The pilot is free. A rise in your class average lowers next year's price.</p>
       </div>
     </div>
   </section>
@@ -952,7 +970,7 @@
 
       <div class="vk">You pay for</div>
       <div>Logins, upfront, whether marks move or not</div>
-      <div class="vw">Results, or it's free</div>
+      <div class="vw">A free pilot, then less as marks rise</div>
     </div>
   </section>
 
@@ -1448,7 +1466,7 @@
       <div class="card">
         <span class="cn">MANAGEMENT</span>
         <div class="ct">Pay for learning, not logins</div>
-        <div class="cb">Lift the middle of the class and the results follow. Priced on your students' improvement, on your own tests.</div>
+        <div class="cb">Lift the middle of the class and the results follow. Free to start, and the price falls as your students improve on your own tests.</div>
       </div>
       <div class="card">
         <span class="cn">PRINCIPAL</span>
@@ -1475,34 +1493,51 @@
 
   <!-- ============ 11 · HOW IT FITS ============ -->
   <section class="deck-slide s-paper">
-    <div class="stack" style="max-width: 60ch;">
+    <div class="stack" style="max-width: 62ch;">
       <div class="kicker" data-r style="--d:0">How it fits</div>
-      <h2 class="display sm" data-r style="--d:1">No extra period. <span class="accent">It's the homework they already do.</span></h2>
+      <h2 class="display sm" data-r style="--d:1">Fits into <span class="accent nw-wide" style="display:block">the time they already have.</span></h2>
+      <p class="lead" data-r style="--d:2">Pick one for each section. Either keeps the pilot free.</p>
     </div>
-    <div class="checks" data-r style="--d:2; margin-top: clamp(1.8rem,3.5vh,2.8rem);">
+
+    <!-- the same two options as the usage bar on slides 2 and 19 -->
+    <div class="fit-opts" data-r style="--d:3;">
+      <div class="card">
+        <div class="fit-top">
+          <span class="cn">IN SCHOOL</span>
+          <span class="fit-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 20.5h18M4.5 9.5L12 4.5l7.5 5M5.5 9.5h13M7.5 12.5v5M12 12.5v5M16.5 12.5v5"/></svg></span>
+        </div>
+        <div class="ct">Your study period</div>
+        <div class="fit-amt">3 periods<small>a week</small></div>
+        <p class="cb">A library, lab or self-study period already in the timetable. Students work on the devices you have; the teacher watches the class live.</p>
+      </div>
+      <div class="fit-or">or</div>
+      <div class="card">
+        <div class="fit-top">
+          <span class="cn">AT HOME</span>
+          <span class="fit-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 11L12 4l8.5 7M5.5 9.5v10.5h13V9.5M10 20v-5.5h4V20"/></svg></span>
+        </div>
+        <div class="ct">Their homework</div>
+        <div class="fit-amt">3 hours<small>a week</small></div>
+        <p class="cb">Three one-hour sessions in place of homework they already do, on the chapter your class is on. Teachers see who did it.</p>
+      </div>
+    </div>
+
+    <div class="checks four" data-r style="--d:4;">
       <div class="check">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="11" fill="var(--teal)"/><path d="M7 12.5l3.2 3.2L17 9" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        <p><b>20–30 minutes a day</b>, as homework or in a lab period, on the chapter your class is on. No timetable change.</p>
+        <p><b>One 40-minute teacher training.</b> Reports read in the two minutes before class.</p>
       </div>
       <div class="check">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="11" fill="var(--sky)"/><path d="M7 12.5l3.2 3.2L17 9" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        <p><b>One 40-minute teacher training.</b> Reports are built to be read in the two minutes before class.</p>
+        <p><b>Organised by sections</b>, with admins choosing which chapters go live, when.</p>
       </div>
       <div class="check">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="11" fill="var(--teal)"/><path d="M7 12.5l3.2 3.2L17 9" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        <p><b>Organised by sections</b>, mirrors the classes and divisions you already have.</p>
+        <p><b>Runs in any browser</b>. No installs, no new hardware.</p>
       </div>
       <div class="check">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="11" fill="var(--sky)"/><path d="M7 12.5l3.2 3.2L17 9" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        <p><b>Admins stay in control</b>, choose exactly which chapters go live, when.</p>
-      </div>
-      <div class="check">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="11" fill="var(--teal)"/><path d="M7 12.5l3.2 3.2L17 9" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        <p><b>Runs in any browser</b>, no installs, no new hardware, works on the devices you have.</p>
-      </div>
-      <div class="check">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="11" fill="var(--sky)"/><path d="M7 12.5l3.2 3.2L17 9" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        <p><b>Insights flow back to teachers</b>, progress and gaps, ready for parent-teacher meetings.</p>
+        <p><b>Insights flow back</b> to teachers, ready for parent-teacher meetings.</p>
       </div>
     </div>
   </section>
@@ -1530,13 +1565,13 @@
         <div class="tdot">8</div>
         <div class="twk">Weeks 1–8</div>
         <div class="tt">One-on-one lessons</div>
-        <div class="tb">20–30 minutes a day. Each student is taught the ideas they're missing, and re-checked.</div>
+        <div class="tb">Three sessions a week, in a study period or as homework. Each student is taught the ideas they're missing, and re-checked.</div>
       </div>
       <div class="tnode">
         <div class="tdot">✓</div>
         <div class="twk">Week 8</div>
         <div class="tt">Your end test, your verdict</div>
-        <div class="tb">A matched test with new questions, marked by your teachers. +5 points for ₹500. No improvement, it's free.</div>
+        <div class="tb">A matched test with new questions, marked by your teachers. +5 points takes ₹1,000 off next year.</div>
       </div>
     </div>
     <p class="lead" data-r style="--d:3; margin-top: clamp(1.6rem,3vh,2.4rem);">
@@ -1549,34 +1584,29 @@
   <section class="deck-slide s-paper">
     <div class="stack" style="max-width: 62ch;">
       <div class="kicker" data-r style="--d:0">The offer</div>
-      <h2 class="display sm" data-r style="--d:1">Pay for results, <span class="accent">not for logins.</span></h2>
+      <h2 class="display sm" data-r style="--d:1">Your results <span class="accent" style="white-space:nowrap">set your price.</span></h2>
     </div>
     <div class="cards two" data-r style="--d:2; margin-top: clamp(1.4rem,3vh,2.2rem); max-width: 1180px;">
       <div class="card price">
-        <span class="cn">OPTION A · PILOT ON RESULTS</span>
+        <span class="cn">THE PILOT · 8 WEEKS</span>
         <div class="ct">Founding pilot</div>
-        <div class="pa">₹500<small>per student, 8 weeks</small></div>
+        <div class="pa">Free<small>when students use it</small></div>
         <ul>
-          <li>For a 5-point rise in your class average, on your own end test.</li>
-          <li>No improvement, it's free. Nothing upfront. Every rupee credited to the annual plan.</li>
+          <li>Three study periods a week, or three one-hour homework sessions.</li>
+          <li>Free whatever the result. Students who use it less are billed ₹500 each, because results depend on use.</li>
         </ul>
       </div>
       <div class="card price featured">
-        <span class="cn">OPTION B · PAY PER STUDENT WHO IMPROVES</span>
-        <div class="ct">Outcome pilot</div>
-        <div class="pa">₹250<small>per student, plus ₹500 for each student who improves</small></div>
+        <span class="cn">NEXT YEAR · SET BY YOUR RESULTS</span>
+        <div class="ct">Annual plan</div>
+        <div class="pa">₹2,000<small>per student per year, after a 5-point rise</small></div>
         <ul>
-          <li>"Improves" means at least 15 marks out of 100 on your own matched test.</li>
-          <li>Never more than ₹750 per student. Credited to the annual plan.</li>
+          <li>Measured on your class average, on your own matched end test.</li>
+          <li>₹3,000 without the rise. Either price locked for two years.</li>
         </ul>
       </div>
     </div>
-    <div class="price-strip" data-r style="--d:3;">
-      <div><b>Annual · flat</b><strong>₹3,000</strong> per student per year. Founding partners: <strong>₹2,000</strong>, locked for two years.</div>
-      <div><b>Annual · on results</b><strong>₹1,000</strong> per student, plus <strong>₹2,000</strong> for each student who improves.</div>
-      <div><b>Founding partner</b>Locked price in return for a co-branded case study. Physics and Chemistry included.</div>
-    </div>
-    <p class="fine" data-r style="--d:4;">Outcome pricing counts students who use WizzBox at least 3 days a week. Students below that are billed at the full rate, because the result depends on use.</p>
+    <p class="fine" data-r style="--d:3;">Use is tracked on your dashboard every week, so nothing is a surprise at the end. Founding partners get Physics and Chemistry included, in return for a co-branded case study.</p>
   </section>
 
   <!-- ============ 14 · CLOSING ============ -->
@@ -1597,7 +1627,7 @@
       <h2 class="display" data-r style="--d:1">Teach every student like they're <span class="accent">your only student.</span></h2>
       <p class="lead" data-r style="--d:2; color: rgba(246,237,226,.78); max-width: 52ch;">
         Start with Class 10 at one campus this month. Every student's gaps on screen in week one.
-        Results on your own test, <span style="white-space:nowrap">or it's free.</span>
+        Free for eight weeks <span style="white-space:nowrap">while students use it.</span>
       </p>
       <div class="rule" data-r style="--d:3; margin-top:1.6rem; max-width:62ch;"></div>
       <div class="foot" data-r style="--d:4; margin-top:1.4rem; font-size:.84rem;">
